@@ -61,7 +61,9 @@ class _MyHomePageState extends State<MyHomePage> {
               width: 1,
             ),
           )),
-      body: const MatchingGrid(),
+      body: const MatchingGrid(
+        key: Key('myMatchingGrid'),
+      ),
     );
   }
 }
