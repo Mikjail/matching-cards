@@ -18,8 +18,8 @@ void main() {
         .state<MatchingGridState>(find.byKey(const Key('myMatchingGrid')));
 
     // Check initial state
-    expect(myWidgetState.leftIndex, Set<int>());
-    expect(myWidgetState.leftIndex, Set<int>());
+    expect(myWidgetState.leftIndex, <int>{});
+    expect(myWidgetState.leftIndex, <int>{});
 
     // Tap a card inside the left grid
     await tester.tap(find.byType(Card).first);
