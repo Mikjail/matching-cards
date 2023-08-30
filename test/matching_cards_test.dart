@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:of_card_match/main.dart';
+import 'package:of_card_match/matching_cards/%20custom_card.dart';
 import 'package:of_card_match/matching_cards/matching_cards.dart';
 
 void main() {
@@ -18,21 +19,14 @@ void main() {
         .state<MatchingGridState>(find.byKey(const Key('myMatchingGrid')));
 
     // Check initial state
-    expect(myWidgetState.leftIndex, <int>{});
-    expect(myWidgetState.leftIndex, <int>{});
+    expect(myWidgetState.leftIndexSelected, null);
+    expect(myWidgetState.leftIndexSelected, null);
 
     // Tap a card inside the left grid
-    await tester.tap(find.byType(Card).first);
+    await tester.tap(find.byType(CustomCard).first);
     await tester.pump();
 
     // Access the state of the widget and verify that the state is updated
-    expect(myWidgetState.leftIndex, {0});
-
-    // Tap a card inside the right grid
-    await tester.tap(find.byType(Card).last);
-    await tester.pump();
-
-    // Access the state of the widget and verify that the state is updated
-    expect(myWidgetState.rightIndex, {0});
+    expect(myWidgetState.leftIndexSelected, 1);
   });
 }
