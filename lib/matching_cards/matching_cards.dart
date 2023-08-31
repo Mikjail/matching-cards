@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:of_card_match/matching_cards/%20custom_card.dart';
+import 'package:of_card_match/matching_cards/custom_card.dart';
 
 class MatchingGrid extends StatefulWidget {
   const MatchingGrid({Key? key}) : super(key: key);
@@ -11,8 +11,8 @@ class MatchingGrid extends StatefulWidget {
 class MatchingGridState extends State<MatchingGrid> {
   int? leftIndexSelected;
   int? rightIndexSelected;
-  final List<int> mockDataLeft = List.generate(4, (index) => index + 1);
-  final List<int> mockDataRight = List.generate(4, (index) => index + 1);
+  final List<int> mockDataLeft = List.generate(4, (index) => index);
+  final List<int> mockDataRight = List.generate(4, (index) => index);
 
   void onLeftCardTap(int cardIndex) {
     setState(() {
@@ -44,38 +44,38 @@ class MatchingGridState extends State<MatchingGrid> {
       children: <Widget>[
         Expanded(
           child: GridView.builder(
+            key: const Key('leftGrid'),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 1,
               childAspectRatio: 2,
             ),
             itemCount: mockDataLeft.length,
+            physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CustomCard(
-                  cardIndex: mockDataLeft[index],
-                  selected: mockDataLeft[index] == leftIndexSelected,
-                  onCardTap: onLeftCardTap,
-                ),
+              return CustomCard(
+                key: Key('leftCard-$index'),
+                cardIndex: index,
+                selected: mockDataLeft[index] == leftIndexSelected,
+                onCardTap: onLeftCardTap,
               );
             },
           ),
         ),
         Expanded(
           child: GridView.builder(
+            key: const Key('rightGrid'),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 1,
               childAspectRatio: 2,
             ),
             itemCount: mockDataRight.length,
+            physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CustomCard(
-                  cardIndex: mockDataRight[index],
-                  selected: mockDataRight[index] == rightIndexSelected,
-                  onCardTap: onRightCardTap,
-                ),
+              return CustomCard(
+                key: Key('rightCard-$index'),
+                cardIndex: index,
+                selected: mockDataRight[index] == rightIndexSelected,
+                onCardTap: onRightCardTap,
               );
             },
           ),
