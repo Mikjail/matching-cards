@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:of_card_match/matching_cards/matching_cards.dart';
+import 'package:of_card_match/services/matching_card_service.dart';
 
 void main() {
+  // Register your service as a singleton
+  GetIt.instance.registerSingleton<MatchingCardService>(MatchingCardService());
+
   runApp(const MyApp());
 }
 
@@ -51,16 +56,16 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Colors.black,
-          toolbarHeight: 100,
-          title:
-              Text(widget.title, style: const TextStyle(color: Colors.white)),
-          shape: const Border(
-            bottom: BorderSide(
-              color: Colors.grey,
-              width: 1,
-            ),
-          )),
+        backgroundColor: Colors.black,
+        toolbarHeight: 100,
+        title: Text(widget.title, style: const TextStyle(color: Colors.white)),
+        shape: const Border(
+          bottom: BorderSide(
+            color: Colors.grey,
+            width: 1,
+          ),
+        ),
+      ),
       body: const Center(
         child: MatchingGrid(
           key: Key('myMatchingGrid'),

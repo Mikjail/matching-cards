@@ -4,13 +4,15 @@ class CustomCard extends StatelessWidget {
   final bool selected;
   final int cardIndex;
   final Function(int) onCardTap;
+  final String text;
 
-  const CustomCard({
-    Key? key,
-    this.selected = false,
-    required this.cardIndex,
-    required this.onCardTap,
-  }) : super(key: key);
+  const CustomCard(
+      {Key? key,
+      this.selected = false,
+      required this.cardIndex,
+      required this.onCardTap,
+      required this.text})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +39,7 @@ class CustomCard extends StatelessWidget {
           child: Container(
             alignment: Alignment.center,
             child: Text(
-              cardIndex.toString(),
+              text,
               style: TextStyle(
                 color: selected
                     ? const Color.fromARGB(255, 225, 250, 82)

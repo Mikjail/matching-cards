@@ -1,0 +1,220 @@
+[
+    {
+        "team": "Argentina",
+        "players": [
+            {
+                "name": "Lionel Messi",
+                "age": 32
+            },
+            {
+                "name": "Sergio Aguero",
+                "age": 31
+            },
+            {
+                "name": "Angel Di Maria",
+                "age": 31
+            },
+            {
+                "name": "Paulo Dybala",
+                "age": 26
+            },
+            {
+                "name": "Giovani Lo Celso",
+                "age": 23
+            },
+            {
+                "name": "Nicolas Otamendi",
+                "age": 31
+            },
+            {
+                "name": "Marcos Rojo",
+                "age": 29
+            },
+            {
+                "name": "Nicolas Tagliafico",
+                "age": 27
+            },
+            {
+                "name": "Franco Armani",
+                "age": 33
+            },
+            {
+                "name": "Esteban Andrada",
+                "age": 28
+            },
+            {
+                "name": "Juan Foyth",
+                "age": 21
+            },
+            {
+                "name": "Walter Kannemann",
+                "age": 28
+            },
+            {
+                "name": "German Pezzella",
+                "age": 28
+            },
+            {
+                "name": "Renzo Saravia",
+                "age": 26
+            },
+            {
+                "name": "Leandro Paredes",
+                "age": 25
+            },
+            {
+                "name": "Guido Rodriguez",
+                "age": 25
+            },
+            {
+                "name": "Rodrigo De Paul",
+                "age": 25
+            },
+            {
+                "name": "Roberto Pereyra",
+                "age": 28
+            },
+            {
+                "name": "Angel Correa",
+                "age": 24
+            },
+            {
+                "name": "Lautaro Martinez",
+                "age": 22
+            },
+            {
+                "name": "Matias Suarez",
+                "age": 31
+            },
+            {
+                "name": "Matias Vargas",
+                "age": 22
+            },
+            {
+                "name": "Gonzalo Montiel",
+                "age": 22
+            },
+            {
+                "name": "Agustin Marchesin",
+                "age": 31
+            },
+            {
+                "name": "Lucas Martinez Quarta",
+                "age": 23
+            },
+            {
+                "name": "Nahuel Molina",
+                "age": 21
+            },
+            {
+                "name": "Ezequiel Palacios",
+                "age": 21
+            }
+        ]
+    },
+    {
+        "team": "Brasil",
+        "players": [
+            {
+                "name": "Neymar",
+                "age": 27
+            },
+            {
+                "name": "Roberto Firmino",
+                "age": 27
+            },
+            {
+                "name": "Philippe Coutinho",
+                "age": 27
+            },
+            {
+                "name": "Casemiro",
+                "age": 27
+            },
+            {
+                "name": "Marquinhos",
+                "age": 25
+            },
+            {
+                "name": "Thiago Silva",
+                "age": 34
+            },
+            {
+                "name": "Alisson",
+                "age": 26
+            },
+            {
+                "name": "Ederson",
+                "age": 25
+            },
+            {
+                "name": "Dani Alves",
+                "age": 36
+            },
+            {
+                "name": "Alex Sandro",
+                "age": 28
+            },
+            {
+                "name": "Fagner",
+                "age": 30
+            },
+            {
+                "name": "Felipe",
+                "age": 30
+            },
+            {
+                "name": "Eder Militao",
+                "age": 21
+            },
+            {
+                "name": "Thiago Silva",
+                "age": 34
+            },
+            {
+                "name": "Miranda",
+                "age": 34
+            },
+            {
+                "name": "Allan",
+                "age": 28
+            },
+            {
+                "name": "Arthur",
+                "age": 22
+            },
+            {
+                "name": "Lucas Paqueta",
+                "age": 21
+            },
+            {
+                "name": "Fernandinho",
+                "age": 34
+            },
+            {
+                "name": "Richarlison",
+                "age": 22
+            },
+            {
+                "name": "David Neres",
+                "age": 22
+            },
+            {
+                "name": "Everton",
+                "age": 23
+            },
+            {
+                "name": "Wesley",
+                "age": 22
+            },
+            {
+                "name": "Rodrygo",
+                "age": 18
+            },
+            {
+                "name": "Weverton",
+                "age": 31
+            }
+        ]
+    }
+]
