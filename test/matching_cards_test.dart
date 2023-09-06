@@ -3,6 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:of_card_match/locator.dart';
 import 'package:of_card_match/matching_cards/matching_cards.dart';
 
+const double portraitWidth = 400.0;
+const double portraitHeight = 600.0;
+
 void main() {
   const MatchingGrid matchingGrid = MatchingGrid(key: Key('myMatchingGrid'));
   const MaterialApp materialApp = MaterialApp(
@@ -10,7 +13,7 @@ void main() {
     home: Scaffold(body: matchingGrid),
   );
 
-  setUp(() {
+  setUp(() async {
     setUpLocator();
   });
 
@@ -18,6 +21,9 @@ void main() {
 
   testWidgets('Grid item tap updates state', (tester) async {
     await tester.runAsync(() async {
+      final TestWidgetsFlutterBinding binding =
+          TestWidgetsFlutterBinding.ensureInitialized();
+      await binding.setSurfaceSize(const Size(portraitWidth, portraitHeight));
       await tester.pumpWidget(materialApp);
 
       await tester.pumpAndSettle();
@@ -32,22 +38,12 @@ void main() {
       expect(myWidgetState.leftIndexSelected, null);
       expect(myWidgetState.rightIndexSelected, null);
 
-      await tester.dragUntilVisible(find.byKey(const Key('leftCard-2')),
-          find.byKey(const Key('leftGrid')), const Offset(0, 800));
-
-      await tester.pumpAndSettle();
-
       // Tap a card inside the left grid
       await tester.tap(find.byKey(const Key('leftCard-3')));
       await tester.pump();
 
       // Access the state of the widget and verify that the state is updated
       expect(myWidgetState.leftIndexSelected, 3);
-
-      await tester.dragUntilVisible(find.byKey(const Key('rightCard-2')),
-          find.byKey(const Key('rightCard')), const Offset(0, 800));
-
-      await tester.pumpAndSettle();
 
       await tester.tap(find.byKey(const Key('rightCard-3')));
       await tester.pump();
@@ -75,18 +71,12 @@ void main() {
       expect(myWidgetState.leftIndexSelected, null);
       expect(myWidgetState.rightIndexSelected, null);
 
-      await tester.dragUntilVisible(find.text('Argentina'),
-          find.byKey(const Key('leftGrid')), const Offset(0, 100));
-
-      // Wait for the widget tree to settle
-      await tester.pumpAndSettle();
-
       // // tap team (left card)
-      await tester.tap(find.text('Argentina', skipOffstage: true));
+      await tester.tap(find.text('Argentina'));
       await tester.pump();
 
       // tap football player (rifght card)
-      await tester.tap(find.text('Lionel Messi', skipOffstage: true));
+      await tester.tap(find.text('Lionel Messi'));
       await tester.pump();
 
       // Access the state of the widget and verify that the state is updated
@@ -115,24 +105,12 @@ void main() {
       expect(myWidgetState.leftIndexSelected, null);
       expect(myWidgetState.rightIndexSelected, null);
 
-      await tester.dragUntilVisible(find.byKey(const Key('leftCard-2')),
-          find.byKey(const Key('leftGrid')), const Offset(0, 200));
-
-      // Wait for the widget tree to settle
-      await tester.pumpAndSettle();
-
       // tap team (left card)
-      await tester.tap(find.text('Brasil', skipOffstage: false));
+      await tester.tap(find.text('Brasil'));
       await tester.pump();
 
-      await tester.dragUntilVisible(find.byKey(const Key('rightCard-2')),
-          find.byKey(const Key('rightGrid')), const Offset(50, 500));
-
-      // Wait for the widget tree to settle
-      await tester.pumpAndSettle();
-
       // // // tap football player (rifght card)
-      await tester.tap(find.text('Luis Suarez', skipOffstage: false));
+      await tester.tap(find.text('Luis Suarez'));
       await tester.pump();
 
       // // // Access the state of the widget and verify that the state is updated
