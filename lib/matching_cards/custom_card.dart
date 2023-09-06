@@ -16,37 +16,30 @@ class CustomCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(5),
-      child: Card(
-        margin: const EdgeInsets.all(5),
-        color: Colors.black,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
+    return GestureDetector(
+      onTap: () {
+        onCardTap(cardIndex);
+      },
+      child: AnimatedContainer(
+        alignment: Alignment.center,
+        duration: const Duration(milliseconds: 100),
+        decoration: BoxDecoration(
+          border: Border.all(
             color: selected
                 ? const Color.fromARGB(255, 225, 250, 82)
                 : const Color.fromARGB(243, 243, 244, 245),
-            width: 3.0,
+            width: selected ? 4.0 : 1.0,
           ),
           borderRadius: BorderRadius.circular(8.0),
         ),
-        child: InkWell(
-          onTap: () {
-            onCardTap(cardIndex);
-          },
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          child: Container(
-            alignment: Alignment.center,
-            child: Text(
-              text,
-              style: TextStyle(
-                color: selected
-                    ? const Color.fromARGB(255, 225, 250, 82)
-                    : Colors.white,
-                fontSize: 16,
-              ),
-            ),
+        margin: const EdgeInsets.all(5),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: selected
+                ? const Color.fromARGB(255, 225, 250, 82)
+                : Colors.white,
+            fontSize: 16,
           ),
         ),
       ),
