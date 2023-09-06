@@ -1,8 +1,8 @@
-import 'dart:collection';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:of_card_match/matching_cards/custom_card.dart';
 import 'package:of_card_match/services/matching_card_service.dart';
+
+import '../locator.dart';
 
 class MatchingGrid extends StatefulWidget {
   const MatchingGrid({Key? key}) : super(key: key);
@@ -12,13 +12,14 @@ class MatchingGrid extends StatefulWidget {
 }
 
 class MatchingGridState extends State<MatchingGrid> {
-  final matchingCardService = GetIt.instance.get<MatchingCardService>();
+  final matchingCardService = locator.get<MatchingCardService>();
   int? leftIndexSelected;
   int? rightIndexSelected;
   List<String> leftList = [];
   List<String> rightList = [];
   List<dynamic> cards = [];
   List<dynamic> playingCards = [];
+  bool isMatch = false;
 
   @override
   void initState() {
@@ -33,7 +34,7 @@ class MatchingGridState extends State<MatchingGrid> {
     // pop the first 5 elements from the list
     cards.shuffle();
 
-    playingCards = cards.take(5).toList();
+    playingCards = cards.take(4).toList();
 
     setState(() {
       leftList = playingCards.map((e) => e.keys.first.toString()).toList();
@@ -75,9 +76,13 @@ class MatchingGridState extends State<MatchingGrid> {
         return element[left] == right;
       });
       if (match) {
-        print('Match!');
+        setState(() {
+          isMatch = true;
+        });
       } else {
-        print('No Match!');
+        setState(() {
+          isMatch = false;
+        });
       }
     }
   }
@@ -88,57 +93,51 @@ class MatchingGridState extends State<MatchingGrid> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          SizedBox(
-            height: 600,
-            width: 200,
-            child: GridView.builder(
-              key: const Key('leftGrid'),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                childAspectRatio: 2,
-              ),
-              itemCount: leftList.length,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (BuildContext context, int index) {
-                return CustomCard(
-                  key: Key('leftCard-$index'),
-                  cardIndex: index,
-                  selected: index == leftIndexSelected,
-                  onCardTap: onLeftCardTap,
-                  text: leftList[index],
-                );
-              },
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Expanded(
+          child: GridView.builder(
+            key: const Key('leftGrid'),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 1,
+              childAspectRatio: 2,
             ),
+            itemCount: leftList.length,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              return CustomCard(
+                key: Key('leftCard-$index'),
+                cardIndex: index,
+                selected: index == leftIndexSelected,
+                onCardTap: onLeftCardTap,
+                text: leftList[index],
+              );
+            },
           ),
-          SizedBox(
-            height: 600,
-            width: 200,
-            child: GridView.builder(
-              key: const Key('rightGrid'),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                childAspectRatio: 2,
-              ),
-              itemCount: rightList.length,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (BuildContext context, int index) {
-                return CustomCard(
-                  text: rightList[index],
-                  key: Key('rightCard-$index'),
-                  cardIndex: index,
-                  selected: index == rightIndexSelected,
-                  onCardTap: onRightCardTap,
-                );
-              },
+        ),
+        Expanded(
+          child: GridView.builder(
+            key: const Key('rightGrid'),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 1,
+              childAspectRatio: 2,
             ),
-          )
-        ],
-      ),
+            itemCount: rightList.length,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              return CustomCard(
+                text: rightList[index],
+                key: Key('rightCard-$index'),
+                cardIndex: index,
+                selected: index == rightIndexSelected,
+                onCardTap: onRightCardTap,
+              );
+            },
+          ),
+        )
+      ],
     );
   }
 }

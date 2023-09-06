@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:of_card_match/locator.dart';
 import 'package:of_card_match/matching_cards/matching_cards.dart';
-import 'package:of_card_match/services/matching_card_service.dart';
 
 void main() {
   // Register your service as a singleton
-  GetIt.instance.registerSingleton<MatchingCardService>(MatchingCardService());
+  setUpLocator();
 
   runApp(const MyApp());
 }
@@ -66,8 +65,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-      body: const Center(
-        child: MatchingGrid(
+      body: Container(
+        child: const MatchingGrid(
           key: Key('myMatchingGrid'),
         ),
       ),
