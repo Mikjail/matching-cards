@@ -11,10 +11,10 @@ class MatchingCardService {
 
     final List<dynamic> list = data
         .expand((team) => team['players']
-            .map((player) => HashMap.from({team['team']: player['name']}))
+            .map((player) => {'team': team['team'], 'player': player['name']})
             .toList())
         .toList();
-
+    print(list);
     return list;
   }
 }

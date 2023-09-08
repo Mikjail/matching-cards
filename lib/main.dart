@@ -27,7 +27,6 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black,
-          toolbarHeight: 100,
           title: Text(title, style: const TextStyle(color: Colors.white)),
           shape: const Border(
             bottom: BorderSide(

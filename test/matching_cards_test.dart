@@ -75,7 +75,7 @@ void main() {
       // Access the state of the widget and verify that the state is updated
       expect(myWidgetState.leftIndexSelected, isNotNull);
       expect(myWidgetState.rightIndexSelected, isNotNull);
-      expect(myWidgetState.isMatch, true);
+      expect(myWidgetState.isMatch, MatchStatus.match);
     });
   });
 
@@ -110,7 +110,7 @@ void main() {
       // // // Access the state of the widget and verify that the state is updated
       expect(myWidgetState.leftIndexSelected, isNotNull);
       expect(myWidgetState.rightIndexSelected, isNotNull);
-      expect(myWidgetState.isMatch, false);
+      expect(myWidgetState.isMatch, MatchStatus.noMatch);
     });
   });
 }
