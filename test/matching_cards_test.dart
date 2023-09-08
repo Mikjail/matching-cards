@@ -3,16 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:of_card_match/locator.dart';
 import 'package:of_card_match/matching_cards/matching_cards.dart';
 
-const double portraitWidth = 400.0;
-const double portraitHeight = 600.0;
-
 void main() {
-  const MatchingGrid matchingGrid = MatchingGrid(key: Key('myMatchingGrid'));
-  const MaterialApp materialApp = MaterialApp(
-    title: 'OneFootball - Matching Cards',
-    home: Scaffold(body: matchingGrid),
-  );
-
   setUp(() async {
     setUpLocator();
   });
@@ -21,9 +12,10 @@ void main() {
 
   testWidgets('Grid item tap updates state', (tester) async {
     await tester.runAsync(() async {
-      final TestWidgetsFlutterBinding binding =
-          TestWidgetsFlutterBinding.ensureInitialized();
-      await binding.setSurfaceSize(const Size(portraitWidth, portraitHeight));
+      await adjustSize();
+
+      final materialApp = makeSut();
+
       await tester.pumpWidget(materialApp);
 
       await tester.pumpAndSettle();
@@ -55,6 +47,7 @@ void main() {
   testWidgets('When two cards tapped match then isMatch is true',
       (tester) async {
     await tester.runAsync(() async {
+      final materialApp = makeSut();
       // Create a new instance of the MatchingGrid widget
       await tester.pumpWidget(materialApp);
 
@@ -89,6 +82,7 @@ void main() {
   testWidgets('When two cards tapped dont match isMatch is false',
       (tester) async {
     await tester.runAsync(() async {
+      final materialApp = makeSut();
       // Create a new instance of the MatchingGrid widget
       await tester.pumpWidget(materialApp);
 
@@ -119,4 +113,19 @@ void main() {
       expect(myWidgetState.isMatch, false);
     });
   });
+}
+
+Widget makeSut() {
+  return const MaterialApp(
+    title: 'OneFootball - Matching Cards',
+    home: Scaffold(body: MatchingGrid(key: Key('myMatchingGrid'))),
+  );
+}
+
+Future<void> adjustSize() async {
+  const double portraitWidth = 400.0;
+  const double portraitHeight = 600.0;
+  final TestWidgetsFlutterBinding binding =
+      TestWidgetsFlutterBinding.ensureInitialized();
+  await binding.setSurfaceSize(const Size(portraitWidth, portraitHeight));
 }

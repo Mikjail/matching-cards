@@ -71,7 +71,6 @@ class MatchingGridState extends State<MatchingGrid> {
     if (leftIndexSelected != null && rightIndexSelected != null) {
       final left = leftList[leftIndexSelected!];
       final right = rightList[rightIndexSelected!];
-      // check if the left and right match one of the cards
       final match = playingCards.any((element) {
         return element[left] == right;
       });
