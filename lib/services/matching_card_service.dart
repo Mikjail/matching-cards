@@ -14,7 +14,7 @@ class MatchingCardService {
             .map((player) => {'team': team['team'], 'player': player['name']})
             .toList())
         .toList();
-    print(list);
+
     return list;
   }
 }

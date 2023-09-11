@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:of_card_match/matching_cards/custom_card.dart';
+import 'package:of_card_match/models/team.dart';
 import 'package:of_card_match/services/matching_card_service.dart';
 import '../locator.dart';
 
@@ -18,12 +19,14 @@ class MatchingGrid extends StatefulWidget {
 
 class MatchingGridState extends State<MatchingGrid> {
   final matchingCardService = locator.get<MatchingCardService>();
+  late MatchingCardBoard matchingCardBoard;
   int? leftIndexSelected;
   int? rightIndexSelected;
-  List<String> leftList = [];
-  List<String> rightList = [];
-  List<dynamic> cards = [];
-  List<dynamic> playingCards = [];
+  int? leftHeldDown;
+  int? rightHeldDown;
+  List<Map<String, dynamic>> leftList = [];
+  List<Map<String, dynamic>> rightList = [];
+
   MatchStatus isMatch = MatchStatus.reset;
 
   @override
@@ -34,75 +37,75 @@ class MatchingGridState extends State<MatchingGrid> {
 
   Future<void> loadData() async {
     // we use the cardMatching service
-    cards = await matchingCardService.getMatchingCards();
+    final cards = await matchingCardService.getMatchingCards();
+    matchingCardBoard = MatchingCardBoard(cards: cards);
+    fillCards();
+  }
 
-    // pop the first 5 elements from the list
-    cards.shuffle();
-
-    playingCards = cards.take(4).toList();
-
+  void fillCards() {
+    matchingCardBoard.pickRandomCards(4);
     setState(() {
-      leftList = playingCards.map((e) => e['team'].toString()).toList();
-      rightList = playingCards.map((e) => e['player'].toString()).toList();
-
-      leftList.shuffle();
-      rightList.shuffle();
+      leftList = matchingCardBoard.getShuffledCardsFromKey('team');
+      rightList = matchingCardBoard.getShuffledCardsFromKey('player');
     });
   }
 
   void onLeftCardTap(int cardIndex) {
+    if (leftList[cardIndex]['status'] == MatchStatus.match) return;
+
     setState(() {
-      if (leftIndexSelected == cardIndex) {
-        leftIndexSelected = null;
-      } else {
-        leftIndexSelected = cardIndex;
-        checkMatch();
-      }
+      leftIndexSelected = cardIndex;
     });
+    checkMatch();
   }
 
   void onRightCardTap(int cardIndex) {
+    if (rightList[cardIndex]['status'] == MatchStatus.match) return;
     setState(() {
-      if (rightIndexSelected == cardIndex) {
-        rightIndexSelected = null;
-      } else {
-        rightIndexSelected = cardIndex;
-        checkMatch();
+      rightIndexSelected = cardIndex;
+    });
+    checkMatch();
+  }
+
+  void checkMatch() async {
+    if (leftIndexSelected != null && rightIndexSelected != null) {
+      final left = leftList[leftIndexSelected!]['name'];
+      final right = rightList[rightIndexSelected!]['name'];
+      final match = matchingCardBoard.isMatch(left, right);
+      setState(() {
+        isMatch = match ? MatchStatus.match : MatchStatus.noMatch;
+        leftList[leftIndexSelected!]['status'] = isMatch;
+        rightList[rightIndexSelected!]['status'] = isMatch;
+      });
+      if (match) {
+        matchingCardBoard.numberOfMatches += 1;
+        removeCardMatch();
+        // timeout to allow the animation to finish
       }
+      resetBoard();
+    }
+  }
+
+  void removeCardMatch() {
+    setState(() {
+      matchingCardBoard.removeFromSelectedCards(
+          leftList[leftIndexSelected!]['name'],
+          rightList[rightIndexSelected!]['name']);
     });
   }
 
-  void resetBoard() {
-    Future.delayed(const Duration(milliseconds: 200), () {
+  Future<void> resetBoard() {
+    return Future.delayed(const Duration(milliseconds: 200), () {
       setState(() {
         leftIndexSelected = null;
         rightIndexSelected = null;
         isMatch = MatchStatus.reset;
       });
-    });
-  }
-
-  void checkMatch() {
-    if (leftIndexSelected != null && rightIndexSelected != null) {
-      final left = leftList[leftIndexSelected!];
-      final right = rightList[rightIndexSelected!];
-      final match = playingCards.firstWhere(
-        (element) => element['team'] == left && element['player'] == right,
-        orElse: () => null,
-      );
-      print(match);
-      if (match != null) {
-        setState(() {
-          isMatch = MatchStatus.match;
-        });
-        resetBoard();
-      } else {
-        setState(() {
-          isMatch = MatchStatus.noMatch;
-        });
-        resetBoard();
+      if (matchingCardBoard.numberOfMatches == 4) {
+        matchingCardBoard.numberOfMatches = 0;
+        fillCards();
       }
-    }
+    });
   }
 
   getColor(selected) {
@@ -111,53 +114,94 @@ class MatchingGridState extends State<MatchingGrid> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          child: GridView.builder(
-            key: const Key('leftGrid'),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              childAspectRatio: 2,
+    return Container(
+      margin: const EdgeInsets.only(top: 50),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Expanded(
+            child: GridView.builder(
+              key: const Key('leftGrid'),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 1,
+                childAspectRatio: 2,
+              ),
+              itemCount: leftList.length,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                  onTap: () {
+                    leftHeldDown = null;
+                    onLeftCardTap(index);
+                  },
+                  onTapDown: (_) {
+                    if (leftList[index]['status'] == MatchStatus.match) return;
+                    setState(() {
+                      leftHeldDown = index;
+                    });
+                  },
+                  onTapCancel: () {
+                    if (leftList[index]['status'] == MatchStatus.match) return;
+                    setState(() {
+                      leftHeldDown = null;
+                    });
+                  },
+                  child: CustomCard(
+                    key: Key('leftCard-$index'),
+                    isMatch: isMatch,
+                    cardIndex: index,
+                    selected: index == leftIndexSelected,
+                    text: leftList[index]['name']!,
+                    isHeldDown: index == leftHeldDown,
+                    disabled: leftList[index]['status'] == MatchStatus.match,
+                  ),
+                );
+              },
             ),
-            itemCount: leftList.length,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (BuildContext context, int index) {
-              return CustomCard(
-                key: Key('leftCard-$index'),
-                isMatch: isMatch,
-                cardIndex: index,
-                selected: index == leftIndexSelected,
-                onCardTap: onLeftCardTap,
-                text: leftList[index],
-              );
-            },
           ),
-        ),
-        Expanded(
-          child: GridView.builder(
-            key: const Key('rightGrid'),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              childAspectRatio: 2,
+          Expanded(
+            child: GridView.builder(
+              key: const Key('rightGrid'),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 1,
+                childAspectRatio: 2,
+              ),
+              itemCount: rightList.length,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                  onTap: () {
+                    rightHeldDown = null;
+                    onRightCardTap(index);
+                  },
+                  onTapDown: (_) {
+                    if (rightList[index]['status'] == MatchStatus.match) return;
+                    setState(() {
+                      rightHeldDown = index;
+                    });
+                  },
+                  onTapCancel: () {
+                    if (rightList[index]['status'] == MatchStatus.match) return;
+                    setState(() {
+                      rightHeldDown = null;
+                    });
+                  },
+                  child: CustomCard(
+                    key: Key('rightCard-$index'),
+                    isMatch: isMatch,
+                    cardIndex: index,
+                    selected: index == rightIndexSelected,
+                    text: rightList[index]['name']!,
+                    isHeldDown: rightHeldDown == index,
+                    disabled: rightList[index]['status'] == MatchStatus.match,
+                  ),
+                );
+              },
             ),
-            itemCount: rightList.length,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (BuildContext context, int index) {
-              return CustomCard(
-                key: Key('rightCard-$index'),
-                isMatch: isMatch,
-                cardIndex: index,
-                selected: index == rightIndexSelected,
-                onCardTap: onRightCardTap,
-                text: rightList[index],
-              );
-            },
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 }

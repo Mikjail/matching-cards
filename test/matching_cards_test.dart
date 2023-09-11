@@ -32,13 +32,13 @@ void main() {
 
       // Tap a card inside the left grid
       await tester.tap(find.byKey(const Key('leftCard-3')));
-      await tester.pump();
+      await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
       // Access the state of the widget and verify that the state is updated
       expect(myWidgetState.leftIndexSelected, 3);
 
       await tester.tap(find.byKey(const Key('rightCard-3')));
-      await tester.pump();
+      await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
       expect(myWidgetState.rightIndexSelected, 3);
     });
@@ -75,11 +75,14 @@ void main() {
       // Access the state of the widget and verify that the state is updated
       expect(myWidgetState.leftIndexSelected, isNotNull);
       expect(myWidgetState.rightIndexSelected, isNotNull);
-      expect(myWidgetState.isMatch, MatchStatus.match);
+      expect(myWidgetState.leftList[myWidgetState.leftIndexSelected!]['status'],
+          MatchStatus.match);
+      expect(myWidgetState.leftList[myWidgetState.leftIndexSelected!]['status'],
+          MatchStatus.match);
     });
   });
 
-  testWidgets('When two cards tapped dont match isMatch is false',
+  testWidgets('When two cards tapped dont match their value changed to noMatch',
       (tester) async {
     await tester.runAsync(() async {
       final materialApp = makeSut();
@@ -92,12 +95,18 @@ void main() {
       // Verify initial state
       expect(find.byType(GridView), findsNWidgets(2));
 
-      final myWidgetState = tester
+      var myWidgetState = tester
           .state<MatchingGridState>(find.byKey(const Key('myMatchingGrid')));
 
       // Check initial state
-      expect(myWidgetState.leftIndexSelected, null);
-      expect(myWidgetState.rightIndexSelected, null);
+      // // // Access the state of the widget and verify that the state is updated
+      var leftCard =
+          myWidgetState.leftList.firstWhere((card) => card['name'] == 'Brasil');
+      var rightCard = myWidgetState.rightList
+          .firstWhere((card) => card['name'] == 'Luis Suarez');
+
+      expect(leftCard['status'], MatchStatus.reset);
+      expect(rightCard['status'], MatchStatus.reset);
 
       // tap team (left card)
       await tester.tap(find.text('Brasil'));
@@ -105,12 +114,16 @@ void main() {
 
       // // // tap football player (rifght card)
       await tester.tap(find.text('Luis Suarez'));
-      await tester.pump();
+      await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
-      // // // Access the state of the widget and verify that the state is updated
-      expect(myWidgetState.leftIndexSelected, isNotNull);
-      expect(myWidgetState.rightIndexSelected, isNotNull);
-      expect(myWidgetState.isMatch, MatchStatus.noMatch);
+      // Access the state of the widget and verify that the state is updated
+      myWidgetState = tester
+          .state<MatchingGridState>(find.byKey(const Key('myMatchingGrid')));
+
+      await tester.pumpAndSettle(const Duration(milliseconds: 100));
+
+      expect(leftCard['status'], MatchStatus.noMatch);
+      expect(rightCard['status'], MatchStatus.noMatch);
     });
   });
 }
