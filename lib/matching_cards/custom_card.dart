@@ -3,7 +3,7 @@ import 'package:of_card_match/matching_cards/matching_cards.dart';
 
 class CustomCard extends StatelessWidget {
   final bool selected;
-  final int cardIndex;
+
   final String text;
   final MatchStatus isMatch;
   final bool isHeldDown;
@@ -15,7 +15,6 @@ class CustomCard extends StatelessWidget {
     this.isMatch = MatchStatus.reset,
     this.disabled = false,
     this.selected = false,
-    required this.cardIndex,
     required this.text,
   }) : super(key: key);
 
@@ -36,16 +35,18 @@ class CustomCard extends StatelessWidget {
       }
       // The card is disabled!
       if (disabled == true) {
-        return Colors.transparent;
+        return const Color.fromRGBO(243, 243, 244, 0.3);
       }
       return const Color.fromARGB(243, 243, 244, 245);
     }
 
     Color textColor = Colors.white;
 
+    final borderDuration = disabled ? 300 : 100;
+
     return AnimatedContainer(
       alignment: Alignment.center,
-      duration: const Duration(milliseconds: 100),
+      duration: Duration(milliseconds: borderDuration),
       decoration: BoxDecoration(
         border: Border.all(
           color: getColor(),
@@ -57,9 +58,9 @@ class CustomCard extends StatelessWidget {
       child: TweenAnimationBuilder<Color?>(
           tween: ColorTween(
             begin: textColor,
-            end: disabled ? textColor.withOpacity(0) : textColor,
+            end: disabled ? textColor.withOpacity(0.3) : textColor,
           ),
-          duration: const Duration(milliseconds: 400),
+          duration: const Duration(milliseconds: 300),
           builder: (_, Color? color, __) {
             return Text(
               text,

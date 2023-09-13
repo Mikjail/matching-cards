@@ -27,26 +27,29 @@ void main() {
           .state<MatchingGridState>(find.byKey(const Key('myMatchingGrid')));
 
       // Check initial state
-      expect(myWidgetState.leftIndexSelected, null);
-      expect(myWidgetState.rightIndexSelected, null);
+      expect(myWidgetState.prevLeftSelection, null);
+      expect(myWidgetState.prevRightSelection, null);
 
+      const index = 3;
       // Tap a card inside the left grid
-      await tester.tap(find.byKey(const Key('leftCard-3')));
+      await tester.tap(find.byKey(const Key('leftCard-$index')));
       await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
       // Access the state of the widget and verify that the state is updated
-      expect(myWidgetState.leftIndexSelected, 3);
+      expect(myWidgetState.leftList[index]['selected'], isTrue);
 
-      await tester.tap(find.byKey(const Key('rightCard-3')));
+      await tester.tap(find.byKey(const Key('rightCard-$index')));
       await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
-      expect(myWidgetState.rightIndexSelected, 3);
+      expect(myWidgetState.rightList[index]['selected'], isTrue);
     });
   });
 
   testWidgets('When two cards tapped match then isMatch is true',
       (tester) async {
     await tester.runAsync(() async {
+      await adjustSize();
+
       final materialApp = makeSut();
       // Create a new instance of the MatchingGrid widget
       await tester.pumpWidget(materialApp);
@@ -61,8 +64,8 @@ void main() {
           .state<MatchingGridState>(find.byKey(const Key('myMatchingGrid')));
 
       // Check initial state
-      expect(myWidgetState.leftIndexSelected, null);
-      expect(myWidgetState.rightIndexSelected, null);
+      expect(myWidgetState.prevLeftSelection, null);
+      expect(myWidgetState.prevRightSelection, null);
 
       // // tap team (left card)
       await tester.tap(find.text('Argentina'));
@@ -73,12 +76,14 @@ void main() {
       await tester.pump();
 
       // Access the state of the widget and verify that the state is updated
-      expect(myWidgetState.leftIndexSelected, isNotNull);
-      expect(myWidgetState.rightIndexSelected, isNotNull);
-      expect(myWidgetState.leftList[myWidgetState.leftIndexSelected!]['status'],
-          MatchStatus.match);
-      expect(myWidgetState.leftList[myWidgetState.leftIndexSelected!]['status'],
-          MatchStatus.match);
+      final leftCard = myWidgetState.leftList
+          .firstWhere((element) => element['selected'] == true);
+      final rightCard = myWidgetState.rightList
+          .firstWhere((element) => element['selected'] == true);
+      expect(leftCard['selected'], isTrue);
+      expect(rightCard['selected'], isTrue);
+      expect(leftCard['status'], MatchStatus.match);
+      expect(leftCard['status'], MatchStatus.match);
     });
   });
 

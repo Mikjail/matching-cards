@@ -20,8 +20,8 @@ class MatchingGrid extends StatefulWidget {
 class MatchingGridState extends State<MatchingGrid> {
   final matchingCardService = locator.get<MatchingCardService>();
   late MatchingCardBoard matchingCardBoard;
-  int? leftIndexSelected;
-  int? rightIndexSelected;
+  int? prevLeftSelection;
+  int? prevRightSelection;
   int? leftHeldDown;
   int? rightHeldDown;
   List<Map<String, dynamic>> leftList = [];
@@ -54,52 +54,70 @@ class MatchingGridState extends State<MatchingGrid> {
     if (leftList[cardIndex]['status'] == MatchStatus.match) return;
 
     setState(() {
-      leftIndexSelected = cardIndex;
+      if (prevLeftSelection != null) {
+        leftList[prevLeftSelection!]['selected'] = false;
+      }
+      prevLeftSelection = cardIndex;
+      leftList[cardIndex]['selected'] = true;
     });
     checkMatch();
   }
 
   void onRightCardTap(int cardIndex) {
     if (rightList[cardIndex]['status'] == MatchStatus.match) return;
+    print(cardIndex);
     setState(() {
-      rightIndexSelected = cardIndex;
+      if (prevRightSelection != null) {
+        rightList[prevRightSelection!]['selected'] = false;
+      }
+      prevRightSelection = cardIndex;
+      rightList[cardIndex]['selected'] = true;
     });
     checkMatch();
   }
 
   void checkMatch() async {
-    if (leftIndexSelected != null && rightIndexSelected != null) {
-      final left = leftList[leftIndexSelected!]['name'];
-      final right = rightList[rightIndexSelected!]['name'];
+    if (prevLeftSelection != null && prevRightSelection != null) {
+      final left = leftList[prevLeftSelection!]['name'];
+      final right = rightList[prevRightSelection!]['name'];
       final match = matchingCardBoard.isMatch(left, right);
       setState(() {
         isMatch = match ? MatchStatus.match : MatchStatus.noMatch;
-        leftList[leftIndexSelected!]['status'] = isMatch;
-        rightList[rightIndexSelected!]['status'] = isMatch;
+        leftList[prevLeftSelection!]['status'] = isMatch;
+        rightList[prevRightSelection!]['status'] = isMatch;
       });
       if (match) {
         matchingCardBoard.numberOfMatches += 1;
         removeCardMatch();
         // timeout to allow the animation to finish
       }
-      resetBoard();
+      resetBoard(prevLeftSelection, prevRightSelection);
     }
   }
 
   void removeCardMatch() {
     setState(() {
       matchingCardBoard.removeFromSelectedCards(
-          leftList[leftIndexSelected!]['name'],
-          rightList[rightIndexSelected!]['name']);
+          leftList[prevLeftSelection!]['name'],
+          rightList[prevRightSelection!]['name']);
     });
   }
 
-  Future<void> resetBoard() {
-    return Future.delayed(const Duration(milliseconds: 200), () {
+  Future<void> resetBoard(leftIndex, rightIndex) async {
+    final int duration = isMatch == MatchStatus.match ? 500 : 300;
+    setState(() {
+      prevLeftSelection = null;
+      prevRightSelection = null;
+    });
+    return Future.delayed(Duration(milliseconds: duration), () {
       setState(() {
-        leftIndexSelected = null;
-        rightIndexSelected = null;
         isMatch = MatchStatus.reset;
+        leftList[leftIndex]['selected'] = false;
+        rightList[rightIndex]['selected'] = false;
+        if (leftList[leftIndex]['status'] == MatchStatus.noMatch) {
+          leftList[leftIndex]['status'] = MatchStatus.reset;
+          rightList[rightIndex]['status'] = MatchStatus.reset;
+        }
       });
       if (matchingCardBoard.numberOfMatches == 4) {
         matchingCardBoard.numberOfMatches = 0;
@@ -149,9 +167,8 @@ class MatchingGridState extends State<MatchingGrid> {
                   },
                   child: CustomCard(
                     key: Key('leftCard-$index'),
-                    isMatch: isMatch,
-                    cardIndex: index,
-                    selected: index == leftIndexSelected,
+                    isMatch: leftList[index]['status'],
+                    selected: leftList[index]['selected'] == true,
                     text: leftList[index]['name']!,
                     isHeldDown: index == leftHeldDown,
                     disabled: leftList[index]['status'] == MatchStatus.match,
@@ -189,9 +206,8 @@ class MatchingGridState extends State<MatchingGrid> {
                   },
                   child: CustomCard(
                     key: Key('rightCard-$index'),
-                    isMatch: isMatch,
-                    cardIndex: index,
-                    selected: index == rightIndexSelected,
+                    isMatch: rightList[index]['status'],
+                    selected: rightList[index]['selected'] == true,
                     text: rightList[index]['name']!,
                     isHeldDown: rightHeldDown == index,
                     disabled: rightList[index]['status'] == MatchStatus.match,

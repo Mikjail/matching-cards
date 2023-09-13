@@ -24,7 +24,8 @@ class MatchingCardBoard {
 
   getShuffledCardsFromKey(String key) {
     final shuffled = _selectedCards
-        .map((e) => {'name': e[key], 'status': MatchStatus.reset})
+        .map((e) =>
+            {'name': e[key], 'status': MatchStatus.reset, 'selected': false})
         .toList();
     shuffled.shuffle();
     return shuffled;
