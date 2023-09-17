@@ -63,7 +63,8 @@ class MatchingCardsState extends State<MatchingCards> {
   }
 
   void onLeftCardTap(int cardIndex) {
-    if (leftList[cardIndex]['status'] == MatchStatus.match) return;
+    if (leftList[cardIndex]['status'] == MatchStatus.match || !gameStarted)
+      return;
 
     setState(() {
       if (prevLeftSelection != null) {
@@ -76,7 +77,8 @@ class MatchingCardsState extends State<MatchingCards> {
   }
 
   void onRightCardTap(int cardIndex) {
-    if (rightList[cardIndex]['status'] == MatchStatus.match) return;
+    if (rightList[cardIndex]['status'] == MatchStatus.match || !gameStarted)
+      return;
 
     setState(() {
       if (prevRightSelection != null) {
@@ -182,13 +184,15 @@ class MatchingCardsState extends State<MatchingCards> {
                       selected: leftList[index]['selected'] == true,
                       text: leftList[index]['name']!,
                       isHeldDown: index == leftHeldDown,
-                      disabled: leftList[index]['status'] == MatchStatus.match,
+                      disabled: !gameStarted ||
+                          leftList[index]['status'] == MatchStatus.match,
                       onTap: () {
                         leftHeldDown = null;
                         onLeftCardTap(index);
                       },
                       onTapDown: (_) {
-                        if (leftList[index]['status'] == MatchStatus.match) {
+                        if (leftList[index]['status'] == MatchStatus.match ||
+                            !gameStarted) {
                           return;
                         }
                         setState(() {
@@ -196,7 +200,8 @@ class MatchingCardsState extends State<MatchingCards> {
                         });
                       },
                       onTapCancel: () {
-                        if (leftList[index]['status'] == MatchStatus.match) {
+                        if (leftList[index]['status'] == MatchStatus.match ||
+                            !gameStarted) {
                           return;
                         }
                         setState(() {
@@ -225,13 +230,15 @@ class MatchingCardsState extends State<MatchingCards> {
                       selected: rightList[index]['selected'] == true,
                       text: rightList[index]['name']!,
                       isHeldDown: rightHeldDown == index,
-                      disabled: rightList[index]['status'] == MatchStatus.match,
+                      disabled: !gameStarted ||
+                          rightList[index]['status'] == MatchStatus.match,
                       onTap: () {
                         rightHeldDown = null;
                         onRightCardTap(index);
                       },
                       onTapDown: (_) {
-                        if (rightList[index]['status'] == MatchStatus.match) {
+                        if (rightList[index]['status'] == MatchStatus.match ||
+                            !gameStarted) {
                           return;
                         }
                         setState(() {
@@ -239,7 +246,8 @@ class MatchingCardsState extends State<MatchingCards> {
                         });
                       },
                       onTapCancel: () {
-                        if (rightList[index]['status'] == MatchStatus.match) {
+                        if (rightList[index]['status'] == MatchStatus.match ||
+                            !gameStarted) {
                           return;
                         }
                         setState(() {

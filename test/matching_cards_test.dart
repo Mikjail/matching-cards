@@ -27,10 +27,16 @@ void main() {
 
       final myWidgetState = tester
           .state<MatchingCardsState>(find.byKey(const Key('myMatchingGrid')));
-
       // Check initial state
       expect(myWidgetState.prevLeftSelection, null);
       expect(myWidgetState.prevRightSelection, null);
+
+      // set gameStarted to true
+      myWidgetState.setState(() {
+        myWidgetState.gameStarted = true;
+      });
+
+      await tester.pumpAndSettle();
 
       const index = 3;
       // Tap a card inside the left grid
@@ -69,6 +75,13 @@ void main() {
       expect(myWidgetState.prevLeftSelection, null);
       expect(myWidgetState.prevRightSelection, null);
 
+      // set gameStarted to true
+      myWidgetState.setState(() {
+        myWidgetState.gameStarted = true;
+      });
+
+      await tester.pumpAndSettle();
+
       // // tap team (left card)
       await tester.tap(find.text('Argentina'));
       await tester.pump();
@@ -92,6 +105,8 @@ void main() {
   testWidgets('When two cards tapped dont match their value changed to noMatch',
       (tester) async {
     await tester.runAsync(() async {
+      await adjustSize();
+
       final materialApp = makeSut();
       // Create a new instance of the MatchingGrid widget
       await tester.pumpWidget(materialApp);
@@ -104,6 +119,13 @@ void main() {
 
       var myWidgetState = tester
           .state<MatchingCardsState>(find.byKey(const Key('myMatchingGrid')));
+
+      // set gameStarted to true
+      myWidgetState.setState(() {
+        myWidgetState.gameStarted = true;
+      });
+
+      await tester.pumpAndSettle();
 
       // Check initial state
       // // // Access the state of the widget and verify that the state is updated

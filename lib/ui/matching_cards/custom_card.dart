@@ -3,7 +3,6 @@ import 'package:of_card_match/ui/matching_cards/matching_cards.dart';
 
 class CustomCard extends StatelessWidget {
   final bool selected;
-
   final String text;
   final MatchStatus isMatch;
   final bool isHeldDown;
