@@ -1,4 +1,4 @@
-import 'package:of_card_match/matching_cards/matching_cards.dart';
+import 'package:of_card_match/ui/matching_cards/matching_cards.dart';
 
 class MatchingCardBoard {
   final List<dynamic> cards;
@@ -31,12 +31,12 @@ class MatchingCardBoard {
     return shuffled;
   }
 
-  bool isMatch(String left, String right) {
-    return _selectedCards.firstWhere(
-          (card) => card['team'] == left && card['player'] == right,
-          orElse: () => null,
-        ) !=
-        null;
+  MatchStatus getStatus(String left, String right) {
+    final card = _selectedCards.firstWhere(
+      (card) => card['team'] == left && card['player'] == right,
+      orElse: () => null,
+    );
+    return card != null ? MatchStatus.match : MatchStatus.noMatch;
   }
 
   removeFromSelectedCards(String left, String right) {

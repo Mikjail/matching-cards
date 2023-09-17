@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:of_card_match/locator.dart';
-import 'package:of_card_match/matching_cards/matching_cards.dart';
+import 'package:of_card_match/ui/matching_cards/matching_cards.dart';
 
 void main() {
   setUp(() async {
@@ -14,9 +14,11 @@ void main() {
     await tester.runAsync(() async {
       await adjustSize();
 
-      final materialApp = makeSut();
-
-      await tester.pumpWidget(materialApp);
+      await tester.pumpWidget(const MaterialApp(
+          title: 'OneFootball - Matching Cards',
+          home: Material(
+            child: MatchingCards(key: Key('myMatchingGrid')),
+          )));
 
       await tester.pumpAndSettle();
 
@@ -24,7 +26,7 @@ void main() {
       expect(find.byType(GridView), findsNWidgets(2));
 
       final myWidgetState = tester
-          .state<MatchingGridState>(find.byKey(const Key('myMatchingGrid')));
+          .state<MatchingCardsState>(find.byKey(const Key('myMatchingGrid')));
 
       // Check initial state
       expect(myWidgetState.prevLeftSelection, null);
@@ -61,7 +63,7 @@ void main() {
       expect(find.byType(GridView), findsNWidgets(2));
 
       final myWidgetState = tester
-          .state<MatchingGridState>(find.byKey(const Key('myMatchingGrid')));
+          .state<MatchingCardsState>(find.byKey(const Key('myMatchingGrid')));
 
       // Check initial state
       expect(myWidgetState.prevLeftSelection, null);
@@ -101,7 +103,7 @@ void main() {
       expect(find.byType(GridView), findsNWidgets(2));
 
       var myWidgetState = tester
-          .state<MatchingGridState>(find.byKey(const Key('myMatchingGrid')));
+          .state<MatchingCardsState>(find.byKey(const Key('myMatchingGrid')));
 
       // Check initial state
       // // // Access the state of the widget and verify that the state is updated
@@ -123,7 +125,7 @@ void main() {
 
       // Access the state of the widget and verify that the state is updated
       myWidgetState = tester
-          .state<MatchingGridState>(find.byKey(const Key('myMatchingGrid')));
+          .state<MatchingCardsState>(find.byKey(const Key('myMatchingGrid')));
 
       await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
@@ -136,13 +138,13 @@ void main() {
 Widget makeSut() {
   return const MaterialApp(
     title: 'OneFootball - Matching Cards',
-    home: Scaffold(body: MatchingGrid(key: Key('myMatchingGrid'))),
+    home: MatchingCards(key: Key('myMatchingGrid')),
   );
 }
 
 Future<void> adjustSize() async {
   const double portraitWidth = 400.0;
-  const double portraitHeight = 600.0;
+  const double portraitHeight = 800.0;
   final TestWidgetsFlutterBinding binding =
       TestWidgetsFlutterBinding.ensureInitialized();
   await binding.setSurfaceSize(const Size(portraitWidth, portraitHeight));
