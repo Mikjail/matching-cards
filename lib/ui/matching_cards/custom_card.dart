@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:of_card_match/theme/colors.dart';
 import 'package:of_card_match/ui/matching_cards/matching_cards.dart';
 
 class CustomCard extends StatelessWidget {
@@ -28,24 +29,24 @@ class CustomCard extends StatelessWidget {
     Color getColor() {
       // There is a match!
       if (selected && isMatch == MatchStatus.match) {
-        return const Color.fromARGB(255, 119, 206, 122);
+        return success;
       }
       // There is no match!
       if (selected && isMatch == MatchStatus.noMatch) {
-        return Colors.red;
+        return error;
       }
       // The card is selected!
       if (selected || isHeldDown == true) {
-        return const Color.fromARGB(255, 225, 250, 82);
+        return accent;
       }
       // The card is disabled!
       if (disabled == true) {
-        return const Color.fromRGBO(243, 243, 244, 0.3);
+        return grey;
       }
-      return const Color.fromARGB(243, 243, 244, 245);
+      return white;
     }
 
-    Color textColor = Colors.white;
+    Color textColor = white;
 
     final borderDuration = disabled ? 300 : 100;
 
@@ -66,8 +67,8 @@ class CustomCard extends StatelessWidget {
         margin: const EdgeInsets.all(5),
         child: TweenAnimationBuilder<Color?>(
             tween: ColorTween(
-              begin: textColor,
-              end: disabled ? textColor.withOpacity(0.3) : textColor,
+              begin: textColor.withOpacity(0),
+              end: disabled ? textColor.withOpacity(0) : textColor,
             ),
             duration: const Duration(milliseconds: 300),
             builder: (_, Color? color, __) {

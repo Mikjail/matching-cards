@@ -1,5 +1,6 @@
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
+import 'package:of_card_match/theme/colors.dart';
 
 class MatchAppBar extends StatelessWidget {
   final void Function() onCountdownFinished;
@@ -28,7 +29,7 @@ class MatchAppBar extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              color: Colors.white,
+              color: white,
             ),
           ),
         ),
@@ -41,9 +42,9 @@ class MatchAppBar extends StatelessWidget {
             controller: _controller,
             width: MediaQuery.of(context).size.width / 2,
             height: MediaQuery.of(context).size.height / 2,
-            ringColor: Colors.grey[300]!,
+            ringColor: blue,
             ringGradient: null,
-            fillColor: Color.fromARGB(255, 180, 0, 186),
+            fillColor: light_gray,
             fillGradient: null,
             backgroundGradient: null,
             strokeWidth: 4.0,
@@ -74,7 +75,7 @@ class MatchAppBar extends StatelessWidget {
           width: 80,
           child: Text(
             'Matches: ${numberOfMatches.toString()}',
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(color: white),
           ),
         ),
       ],

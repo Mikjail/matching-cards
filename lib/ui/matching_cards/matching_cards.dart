@@ -149,7 +149,7 @@ class MatchingCardsState extends State<MatchingCards> {
   }
 
   getColor(selected) {
-    return selected ? const Color.fromARGB(255, 225, 250, 82) : Colors.white;
+    return selected ? Theme.of(context).colorScheme.secondary : Colors.white;
   }
 
   @override
