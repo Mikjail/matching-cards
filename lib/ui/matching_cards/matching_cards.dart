@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:of_card_match/ui/matching_cards/custom_card.dart';
@@ -57,8 +56,8 @@ class MatchingCardsState extends State<MatchingCards> {
   void fillCards() {
     matchingCardBoard.pickRandomCards(4);
     setState(() {
-      leftList = matchingCardBoard.getShuffledCardsFromKey('team');
-      rightList = matchingCardBoard.getShuffledCardsFromKey('player');
+      leftList = matchingCardBoard.getShuffledCardsFromTeams();
+      rightList = matchingCardBoard.getShuffledCardsFromPlayers();
     });
   }
 

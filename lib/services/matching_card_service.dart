@@ -1,19 +1,28 @@
 import 'dart:convert';
-import 'package:flutter/services.dart';
+import 'package:http/http.dart';
+import 'package:of_card_match/models/team.dart';
 
 class MatchingCardService {
-  Future<List<dynamic>> getMatchingCards() async {
-    final String jsonString =
-        await rootBundle.loadString('assets/mocks/worldcup.json');
+  final Client client;
 
-    final List<dynamic> data = await json.decode(jsonString);
+  MatchingCardService(this.client);
 
-    final List<dynamic> list = data
-        .expand((team) => team['players']
-            .map((player) => {'team': team['team'], 'player': player['name']})
-            .toList())
-        .toList();
+  Future<List<MatchCard>> getMatchingCards() async {
+    // final String jsonString =
+    //     await rootBundle.loadString('assets/mocks/worldcup.json');
 
-    return list;
+    final response = await client.get(Uri.parse(
+        'https://scores-api.onefootball.com/v1/en/competitions/12/players/top?size=50'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+
+      final List<MatchCard> list =
+          data.map<MatchCard>((player) => MatchCard.fromJson(player)).toList();
+
+      return list;
+    } else {
+      throw Exception('Failed to load matching cards');
+    }
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:of_card_match/locator.dart';
-import 'package:of_card_match/theme/colors.dart';
 import 'package:of_card_match/ui/matching_cards/matching_cards.dart';
 import 'package:of_card_match/ui/start._screen.dart';
 
@@ -12,6 +11,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
