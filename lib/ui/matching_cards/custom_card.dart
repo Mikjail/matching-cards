@@ -29,24 +29,24 @@ class CustomCard extends StatelessWidget {
     Color getColor() {
       // There is a match!
       if (selected && isMatch == MatchStatus.match) {
-        return success;
+        return CustomTheme.success;
       }
       // There is no match!
       if (selected && isMatch == MatchStatus.noMatch) {
-        return error;
+        return CustomTheme.error;
       }
       // The card is selected!
       if (selected || isHeldDown == true) {
-        return accent;
+        return CustomTheme.accent;
       }
       // The card is disabled!
       if (disabled == true) {
-        return grey;
+        return CustomTheme.grey;
       }
-      return white;
+      return CustomTheme.white;
     }
 
-    Color textColor = white;
+    Color textColor = CustomTheme.white;
 
     final borderDuration = disabled ? 300 : 100;
 
@@ -74,6 +74,8 @@ class CustomCard extends StatelessWidget {
             builder: (_, Color? color, __) {
               return Text(
                 text,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: color,
                   fontSize: 16,

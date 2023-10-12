@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:of_card_match/locator.dart';
+import 'package:of_card_match/ui/final_score.dart';
 import 'package:of_card_match/ui/matching_cards/matching_cards.dart';
-import 'package:of_card_match/ui/start._screen.dart';
+import 'package:of_card_match/ui/start_screen.dart';
 
 void main() {
   // Register your service as a singleton
@@ -20,7 +21,8 @@ class MyApp extends StatelessWidget {
       title: 'OneFootball - Matching Cards',
       routes: {
         '/': (context) => StartScreen(),
-        '/matchingCards': (context) => const MatchingCards(),
+        '/matchingCards': (context) => const MatchingCards(competitionId: '12'),
+        '/finalScore': (context) => const FinalScore(),
       },
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.black,
