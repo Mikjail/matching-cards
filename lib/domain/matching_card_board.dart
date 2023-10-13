@@ -11,11 +11,11 @@ class MatchingCardBoard {
 
   MatchingCardBoard({required this.cards});
 
-  _shuffleCards() {
+  void _shuffleCards() {
     cards.shuffle();
   }
 
-  pickRandomCards(int count) {
+  void pickRandomCards(int count) {
     _shuffleCards();
     _selectedPlayers = cards.take(count).toList();
   }

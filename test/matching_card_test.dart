@@ -11,6 +11,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:mockito/mockito.dart';
+import 'bot/matching_card_screen_bot.dart';
 import 'matching_card_test.mocks.dart';
 
 @GenerateMocks([
@@ -60,61 +61,43 @@ void main() {
     HttpOverrides.global = MockHttpOverrides();
 
     await setUpMockHttpClient();
-
-    materialApp = makeSut();
   });
 
   testWidgets('When the widget is loaded it should display two grids',
       (tester) async {
-    await tester.runAsync(() async {
-      await adjustSize();
+    final cardMatchBot = CardMatchBot(tester);
 
-      materialApp = makeSut();
+    await cardMatchBot.showBoard();
 
-      // Create a new instance of the MatchingGrid widget
-      await tester.pumpWidget(materialApp);
-
-      // Wait for the widget tree to settle
-      await tester.pumpAndSettle();
-
-      // Verify initial state
-      expect(find.byType(GridView), findsNWidgets(2));
-    });
+    // Verify initial state
+    expect(find.byType(GridView), findsNWidgets(2));
   });
 
   testWidgets(
       'When the widget is loaded and the gameStarted I should be able to tap on left and right cards',
       (tester) async {
     await tester.runAsync(() async {
-      await adjustSize();
+      final cardMatchBot = CardMatchBot(tester);
 
-      // Create a new instance of the MatchingGrid widget
-      await tester.pumpWidget(materialApp);
+      await cardMatchBot.showBoard();
 
-      await tester.pumpAndSettle();
-
-      final myWidgetState = tester
-          .state<MatchingCardsState>(find.byKey(const Key('myMatchingGrid')));
-
-      // set gameStarted to true start it
-      myWidgetState.setState(() {
-        myWidgetState.gameStarted = true;
-      });
-
-      await tester.pumpAndSettle();
+      await cardMatchBot.startGame();
 
       const index = 3;
+
       // Tap a card inside the left grid
       await tester.tap(find.byKey(const Key('leftCard-$index')));
-      await tester.pumpAndSettle(const Duration(milliseconds: 100));
+
+      await tester.pumpAndSettle(const Duration(seconds: 1));
 
       // Access the state of the widget and verify that the cards are selected
-      expect(myWidgetState.leftList[index].selected, isTrue);
+      expect(cardMatchBot.widgetState.leftList[index].selected, isTrue);
 
       await tester.tap(find.byKey(const Key('rightCard-$index')));
-      await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
-      expect(myWidgetState.rightList[index].selected, isTrue);
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+
+      expect(cardMatchBot.widgetState.rightList[index].selected, isTrue);
     });
   });
 
@@ -122,30 +105,19 @@ void main() {
       'When the game started and the left and right cards should be on reset status before being taped',
       (tester) async {
     await tester.runAsync(() async {
-      await adjustSize();
+      final cardMatchBot = CardMatchBot(tester);
 
-      // Create a new instance of the MatchingGrid widget
-      await tester.pumpWidget(materialApp);
+      await cardMatchBot.showBoard();
 
-      // Wait for the widget tree to settle
-      await tester.pumpAndSettle();
-
-      final myWidgetState = tester
-          .state<MatchingCardsState>(find.byKey(const Key('myMatchingGrid')));
-
-      // set gameStarted to true
-      myWidgetState.setState(() {
-        myWidgetState.gameStarted = true;
-      });
-
-      await tester.pumpAndSettle();
+      await cardMatchBot.startGame();
 
       // Check the matchStatus on any random left and right cards
       final Random random = Random();
-      final int randomIndex = random.nextInt(myWidgetState.leftList.length);
+      final int randomIndex =
+          random.nextInt(cardMatchBot.widgetState.leftList.length);
 
-      final leftCard = myWidgetState.leftList[randomIndex];
-      final rightCard = myWidgetState.rightList[randomIndex];
+      final leftCard = cardMatchBot.widgetState.leftList[randomIndex];
+      final rightCard = cardMatchBot.widgetState.rightList[randomIndex];
 
       expect(leftCard.status, MatchStatus.reset);
       expect(rightCard.status, MatchStatus.reset);
@@ -156,35 +128,19 @@ void main() {
       'When the game started and two tapped cards match then status of the cards are match',
       (tester) async {
     await tester.runAsync(() async {
-      await adjustSize();
+      final cardMatchBot = CardMatchBot(tester);
 
-      // Create a new instance of the MatchingGrid widget
-      await tester.pumpWidget(materialApp);
+      await cardMatchBot.showBoard();
 
-      // Wait for the widget tree to settle
-      await tester.pumpAndSettle();
+      await cardMatchBot.startGame();
 
-      final myWidgetState = tester
-          .state<MatchingCardsState>(find.byKey(const Key('myMatchingGrid')));
+      await cardMatchBot.tapCard('Argentina');
 
-      // set gameStarted to true
-      myWidgetState.setState(() {
-        myWidgetState.gameStarted = true;
-      });
+      await cardMatchBot.tapCard('Lionel Messi');
 
-      await tester.pumpAndSettle();
-
-      // // tap team (left card)
-      await tester.tap(find.text('Argentina'));
-      await tester.pump();
-
-      // tap football player (rifght card)
-      await tester.tap(find.text('Lionel Messi'));
-      await tester.pump();
-
-      final leftCard = myWidgetState.leftList
+      final leftCard = cardMatchBot.widgetState.leftList
           .firstWhere((element) => element.selected == true);
-      final rightCard = myWidgetState.rightList
+      final rightCard = cardMatchBot.widgetState.rightList
           .firstWhere((element) => element.selected == true);
 
       expect(leftCard.selected, isTrue);
@@ -198,44 +154,22 @@ void main() {
       'When two tapped cards dont match their status should change to noMatch',
       (tester) async {
     await tester.runAsync(() async {
-      await adjustSize();
+      final cardMatchBot = CardMatchBot(tester);
 
-      // Create a new instance of the MatchingGrid widget
-      await tester.pumpWidget(materialApp);
+      await cardMatchBot.showBoard();
 
-      // Wait for the widget tree to settle
-      await tester.pumpAndSettle();
-
-      var myWidgetState = tester
-          .state<MatchingCardsState>(find.byKey(const Key('myMatchingGrid')));
-
-      // set gameStarted to true
-      myWidgetState.setState(() {
-        myWidgetState.gameStarted = true;
-      });
-
-      await tester.pumpAndSettle();
+      await cardMatchBot.startGame();
 
       // Check initial state
       // Access the state of the widget and verify that the state is defaulted to reset
-      var leftCard =
-          myWidgetState.leftList.firstWhere((card) => card.name == 'Brazil');
-      var rightCard = myWidgetState.rightList
+      var leftCard = cardMatchBot.widgetState.leftList
+          .firstWhere((card) => card.name == 'Brazil');
+      var rightCard = cardMatchBot.widgetState.rightList
           .firstWhere((card) => card.name == 'Cristiano Ronaldo');
 
-      // tap team (left card)
-      await tester.tap(find.text('Brazil'));
-      await tester.pump();
+      await cardMatchBot.tapCard('Brazil');
 
-      // tap football player (rifght card)
-      await tester.tap(find.text('Cristiano Ronaldo'));
-      await tester.pumpAndSettle(const Duration(milliseconds: 100));
-
-      // Access the state of the widget and verify that the state is updated to No Match
-      myWidgetState = tester
-          .state<MatchingCardsState>(find.byKey(const Key('myMatchingGrid')));
-
-      await tester.pumpAndSettle(const Duration(milliseconds: 100));
+      await cardMatchBot.tapCard('Cristiano Ronaldo');
 
       expect(leftCard.status, MatchStatus.noMatch);
       expect(rightCard.status, MatchStatus.noMatch);
@@ -246,34 +180,20 @@ void main() {
       'When there is a non-cosecutive match 10+pts are added to the score',
       (tester) async {
     await tester.runAsync(() async {
-      await adjustSize();
+      final cardMatchBot = CardMatchBot(tester);
 
-      // Create a new instance of the MatchingGrid widget
-      await tester.pumpWidget(materialApp);
+      await cardMatchBot.showBoard();
 
-      // Wait for the widget tree to settle
-      await tester.pumpAndSettle();
+      await cardMatchBot.startGame();
 
-      final myWidgetState = tester
-          .state<MatchingCardsState>(find.byKey(const Key('myMatchingGrid')));
+      await cardMatchBot.tapCard('Argentina');
 
-      // set gameStarted to true
-      myWidgetState.setState(() {
-        myWidgetState.gameStarted = true;
-      });
-
-      await tester.pumpAndSettle();
-
-      // // tap team (left card)
-      await tester.tap(find.text('Argentina'));
-      await tester.pump();
-
-      // tap football player (rifght card)
-      await tester.tap(find.text('Lionel Messi'));
-      await tester.pump();
+      await cardMatchBot.tapCard('Lionel Messi');
 
       // Access the state of the widget and verify that the state is updated
-      expect(myWidgetState.score, 10);
+      // first match = 10
+      // second match = 10 + 15 bonus
+      expect(cardMatchBot.widgetState.score, 10);
     });
   });
 
@@ -281,59 +201,24 @@ void main() {
       'When there is a consecutive match the score should be 10+ and a 15+ bonus = 35pts',
       (tester) async {
     await tester.runAsync(() async {
-      await adjustSize();
+      final cardMatchBot = CardMatchBot(tester);
 
-      // Create a new instance of the MatchingGrid widget
-      await tester.pumpWidget(materialApp);
+      await cardMatchBot.showBoard();
 
-      // Wait for the widget tree to settle
-      await tester.pumpAndSettle();
+      await cardMatchBot.startGame();
 
-      final myWidgetState = tester
-          .state<MatchingCardsState>(find.byKey(const Key('myMatchingGrid')));
+      await cardMatchBot.tapCard('Argentina');
 
-      // set gameStarted to true
-      myWidgetState.setState(() {
-        myWidgetState.gameStarted = true;
-      });
+      await cardMatchBot.tapCard('Lionel Messi');
 
-      await tester.pumpAndSettle();
+      await cardMatchBot.tapCard('Brazil');
 
-      // tap team (left card)
-      await tester.tap(find.text('Argentina'));
-      await tester.pump();
-
-      // tap football player (rifght card)
-      await tester.tap(find.text('Lionel Messi'));
-      await tester.pump();
-
-      // // tap team (left card)
-      await tester.tap(find.text('Brazil'));
-      await tester.pump();
-
-      // tap football player (rifght card)
-      await tester.tap(find.text('Neymar'));
-      await tester.pump();
+      await cardMatchBot.tapCard('Neymar');
 
       // Access the state of the widget and verify that the state is updated
       // first match = 10
       // second match = 10 + 15 bonus
-      expect(myWidgetState.score, 35);
+      expect(cardMatchBot.widgetState.score, 35);
     });
   });
-}
-
-Widget makeSut() {
-  return const MaterialApp(
-    title: 'OneFootball - Matching Cards',
-    home: MatchingCards(key: Key('myMatchingGrid'), competitionId: '12'),
-  );
-}
-
-Future<void> adjustSize() async {
-  const double portraitWidth = 400.0;
-  const double portraitHeight = 800.0;
-  final TestWidgetsFlutterBinding binding =
-      TestWidgetsFlutterBinding.ensureInitialized();
-  await binding.setSurfaceSize(const Size(portraitWidth, portraitHeight));
 }

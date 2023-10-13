@@ -1,7 +1,7 @@
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:of_card_match/domain/matching_card.dart';
-import 'package:of_card_match/domain/players.dart';
+
 import 'package:of_card_match/domain/players_repository.dart';
 import 'package:of_card_match/ui/final_score.dart';
 import 'package:of_card_match/ui/matching_cards/custom_card.dart';

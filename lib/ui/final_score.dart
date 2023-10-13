@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:of_card_match/theme/colors.dart';
-import 'package:of_card_match/ui/matching_cards/matching_cards.dart';
 import 'package:of_card_match/ui/start_screen.dart';
 
 class FinalScore extends StatelessWidget {
