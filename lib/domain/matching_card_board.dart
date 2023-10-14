@@ -5,27 +5,28 @@ import 'package:of_card_match/ui/matching_cards/matching_cards.dart';
 class MatchingCardBoard {
   final int points = 10;
   final int bonusPoints = 15;
-  final List<Player> cardsDeck;
+  final List<Player> cardDeck;
   int _numberOfMatches = 0;
   int _numberOfConsecutiveMatch = 0;
   List<Player> _selectedPlayers = [];
 
   get numberOfMatches => _numberOfMatches;
   get selectedPlayers => _selectedPlayers;
+  get numberOfConsecutiveMatch => _numberOfConsecutiveMatch;
 
-  MatchingCardBoard({required this.cardsDeck});
+  MatchingCardBoard({required this.cardDeck});
 
   void _shuffleCards() {
-    cardsDeck.shuffle();
+    cardDeck.shuffle();
   }
 
   void startGame(int count) {
     _shuffleCards();
-    _selectedPlayers = cardsDeck.take(count).toList();
+    _selectedPlayers = cardDeck.take(count).toList();
   }
 
   void refillCard() {
-    _selectedPlayers.add(cardsDeck.first);
+    _selectedPlayers.add(cardDeck.first);
   }
 
   List<MatchingCard> getShuffledCardsBasedOnTeams() {

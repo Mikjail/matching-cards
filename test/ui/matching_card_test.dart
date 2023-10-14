@@ -54,8 +54,6 @@ setUpMockHttpClient() async {
 }
 
 void main() {
-  var materialApp;
-
   setUp(() async {
     setUpLocator();
 

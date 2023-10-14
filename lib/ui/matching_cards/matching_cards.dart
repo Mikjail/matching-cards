@@ -45,7 +45,7 @@ class MatchingCardsState extends State<MatchingCards> {
   Future<void> loadData() async {
     final players = await playersRepository
         .getTopPlayersFromCompetition(widget.competitionId);
-    matchingCardBoard = MatchingCardBoard(cardsDeck: players);
+    matchingCardBoard = MatchingCardBoard(cardDeck: players);
     fillCards();
   }
 

@@ -65,19 +65,22 @@ void main() {
       imgTeam: 'imgTeam8',
     ),
   ];
-  final matchingCardBoard = MatchingCardBoard(cardsDeck: players);
+  var matchingCardBoard;
+  const cardsToPlay = 4;
+
   setUp(() {
-    matchingCardBoard.startGame(4);
+    matchingCardBoard = MatchingCardBoard(cardDeck: players);
+    matchingCardBoard.startGame(cardsToPlay);
   });
 
   test(
-      'When a game is started I should be able to select the number of cards to play',
+      'When a game has started there should be the same number of cards selected as the number of cards to play',
       () {
-    expect(matchingCardBoard.selectedPlayers.length, 4);
+    expect(matchingCardBoard.selectedPlayers.length, cardsToPlay);
   });
 
   test(
-      'After a game is started I should be able to get 4 Matching Cards based with the name based on a Team',
+      'When a game has started I should be able to get 4 Cards based on a Team name',
       () {
     final matchCards = matchingCardBoard.getShuffledCardsBasedOnTeams();
     final teamNames = players.map((card) => card.team).toList();
@@ -86,7 +89,7 @@ void main() {
   });
 
   test(
-      'After a game is started is started I should be able to get 4 Matching Cards with the name based on a Player',
+      'When a game has started I should be able to get 4 Cards based on a Player name',
       () {
     final matchCards = matchingCardBoard.getShuffledCardsBasedOnPlayers();
     final playerNames = players.map((card) => card.player).toList();
@@ -95,7 +98,7 @@ void main() {
   });
 
   test(
-      'When a game is started and two matching cards are selected I should be able to get a MatchStatus.match',
+      'When 2 matching cards are selected I should be able to get a MatchStatus.match',
       () {
     final leftCard = MatchingCard(
         id: 1, name: 'team1', status: MatchStatus.visible, selected: false);
@@ -106,7 +109,7 @@ void main() {
   });
 
   test(
-      'When a game is started and two unmatching cards are selected I should be able to get a MatchStatus.noMatch',
+      'When 2 unmatching cards are selected I should be able to get a MatchStatus.noMatch',
       () {
     final leftCard = MatchingCard(
         id: 1, name: 'team1', status: MatchStatus.visible, selected: false);
@@ -117,10 +120,34 @@ void main() {
   });
 
   test(
-      'When there is 2 matching cards I should be able to delete them from the selectedList',
+      'When there is 2 matching cards I should be able to from the selected cards',
       () async {
     final card = matchingCardBoard.getShuffledCardsBasedOnTeams().first;
     matchingCardBoard.removeFromSelectedCards(card);
     expect(matchingCardBoard.selectedPlayers.length, 3);
+  });
+
+  test(
+      'when there is 1 match the number of matches and consecutive matches should increase to 1',
+      () {
+    const isMatch = true;
+    matchingCardBoard.setMatchPoints(isMatch);
+    expect(matchingCardBoard.numberOfMatches, 1);
+    expect(matchingCardBoard.numberOfConsecutiveMatch, 1);
+  });
+
+  test('when there is 1 match the score should be 10points', () {
+    const isMatch = true;
+    matchingCardBoard.setMatchPoints(isMatch);
+    expect(matchingCardBoard.calculateScore(), 10);
+  });
+
+  test(
+      'when there is >1 consecutive match, the score should be 10points + 15points',
+      () {
+    const isMatch = true;
+    matchingCardBoard.setMatchPoints(isMatch); // 10points
+    matchingCardBoard.setMatchPoints(isMatch); // 10points + 15points
+    expect(matchingCardBoard.calculateScore(), 25);
   });
 }
