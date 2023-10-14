@@ -1,5 +1,5 @@
 class Player {
-  final String id;
+  final int id;
   final String team;
   final String player;
   final String imgPlayer;
@@ -15,7 +15,7 @@ class Player {
 
   factory Player.fromJson(Map<String, dynamic> json) {
     return Player(
-      id: json['id'].toString(),
+      id: json['id'],
       team: json['nationalTeam']['name'],
       player: json['name'],
       imgPlayer: json['imageSrc'],

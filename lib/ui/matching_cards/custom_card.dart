@@ -15,7 +15,7 @@ class CustomCard extends StatelessWidget {
   const CustomCard({
     Key? key,
     this.isHeldDown = false,
-    this.isMatch = MatchStatus.reset,
+    this.isMatch = MatchStatus.hidden,
     this.disabled = false,
     this.selected = false,
     required this.text,
@@ -72,13 +72,16 @@ class CustomCard extends StatelessWidget {
             ),
             duration: const Duration(milliseconds: 300),
             builder: (_, Color? color, __) {
-              return Text(
-                text,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 16,
+              return Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(
+                  text,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 16,
+                  ),
                 ),
               );
             }),

@@ -15,6 +15,7 @@ class MatchAppBar extends StatelessWidget {
 
   final CountDownController _controller;
   final int numberOfMatches;
+  final contdownDuration = 30;
 
   @override
   Widget build(BuildContext context) {
@@ -35,44 +36,7 @@ class MatchAppBar extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(
-          width: 70.0,
-          height: 70.0,
-          child: CircularCountDownTimer(
-            duration: 30,
-            initialDuration: 0,
-            controller: _controller,
-            width: MediaQuery.of(context).size.width / 2,
-            height: MediaQuery.of(context).size.height / 2,
-            ringColor: CustomTheme.blue,
-            ringGradient: null,
-            fillColor: CustomTheme.lightGray,
-            fillGradient: null,
-            backgroundGradient: null,
-            strokeWidth: 4.0,
-            strokeCap: StrokeCap.round,
-            textStyle: const TextStyle(
-              fontSize: 24.0,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-            textFormat: CountdownTextFormat.S,
-            isReverse: false,
-            isReverseAnimation: false,
-            isTimerTextShown: true,
-            autoStart: false,
-            onStart: () {
-              debugPrint('Countdown Started');
-            },
-            onComplete: onCountdownFinished,
-            onChange: (String timeStamp) {
-              debugPrint('Countdown Changed $timeStamp');
-            },
-            timeFormatterFunction: (defaultFormatterFunction, duration) {
-              return 30 - duration.inSeconds;
-            },
-          ),
-        ),
+        countDown(contdownDuration, _controller, onCountdownFinished, context),
         SizedBox(
           width: 80,
           child: Text(
@@ -83,4 +47,50 @@ class MatchAppBar extends StatelessWidget {
       ],
     );
   }
+}
+
+Widget countDown(
+  int contdownDuration,
+  CountDownController controller,
+  void Function() onCountdownFinished,
+  BuildContext context,
+) {
+  return SizedBox(
+    width: 70.0,
+    height: 70.0,
+    child: CircularCountDownTimer(
+      duration: contdownDuration,
+      initialDuration: 0,
+      controller: controller,
+      width: MediaQuery.of(context).size.width / 2,
+      height: MediaQuery.of(context).size.height / 2,
+      ringColor: CustomTheme.blue,
+      ringGradient: null,
+      fillColor: CustomTheme.lightGray,
+      fillGradient: null,
+      backgroundGradient: null,
+      strokeWidth: 4.0,
+      strokeCap: StrokeCap.round,
+      textStyle: const TextStyle(
+        fontSize: 24.0,
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+      ),
+      textFormat: CountdownTextFormat.S,
+      isReverse: false,
+      isReverseAnimation: false,
+      isTimerTextShown: true,
+      autoStart: false,
+      onStart: () {
+        debugPrint('Countdown Started');
+      },
+      onComplete: onCountdownFinished,
+      onChange: (String timeStamp) {
+        debugPrint('Countdown Changed $timeStamp');
+      },
+      timeFormatterFunction: (defaultFormatterFunction, duration) {
+        return 120 - duration.inSeconds;
+      },
+    ),
+  );
 }

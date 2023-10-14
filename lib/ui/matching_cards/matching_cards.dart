@@ -11,11 +11,7 @@ import 'package:of_card_match/ui/matching_cards/match_app_bar.dart';
 
 import '../../locator.dart';
 
-enum MatchStatus {
-  match,
-  noMatch,
-  reset,
-}
+enum MatchStatus { match, noMatch, hidden, visible }
 
 class MatchingCards extends StatefulWidget {
   final String competitionId;
@@ -33,7 +29,6 @@ class MatchingCardsState extends State<MatchingCards> {
   bool gameStarted = false;
   int score = 0;
   int numberOfMatches = 0;
-  int numberOfConsecutiveMatch = 0;
   int? prevLeftSelection;
   int? prevRightSelection;
   int? leftHeldDown;
@@ -48,10 +43,9 @@ class MatchingCardsState extends State<MatchingCards> {
   }
 
   Future<void> loadData() async {
-    // we use the cardMatching service
-    final cards = await playersRepository
+    final players = await playersRepository
         .getTopPlayersFromCompetition(widget.competitionId);
-    matchingCardBoard = MatchingCardBoard(cards: cards);
+    matchingCardBoard = MatchingCardBoard(cardsDeck: players);
     fillCards();
   }
 
@@ -63,7 +57,7 @@ class MatchingCardsState extends State<MatchingCards> {
   }
 
   void fillCards() {
-    matchingCardBoard.pickRandomCards(4);
+    matchingCardBoard.startGame(4);
     setState(() {
       leftList = matchingCardBoard.getShuffledCardsBasedOnTeams();
       rightList = matchingCardBoard.getShuffledCardsBasedOnPlayers();
@@ -71,10 +65,6 @@ class MatchingCardsState extends State<MatchingCards> {
   }
 
   void onLeftCardTap(int cardIndex) {
-    if (leftList[cardIndex].status == MatchStatus.match || !gameStarted) {
-      return;
-    }
-
     setState(() {
       if (prevLeftSelection != null) {
         leftList[prevLeftSelection!].selected = false;
@@ -86,10 +76,6 @@ class MatchingCardsState extends State<MatchingCards> {
   }
 
   void onRightCardTap(int cardIndex) {
-    if (rightList[cardIndex].status == MatchStatus.match || !gameStarted) {
-      return;
-    }
-
     setState(() {
       if (prevRightSelection != null) {
         rightList[prevRightSelection!].selected = false;
@@ -102,35 +88,21 @@ class MatchingCardsState extends State<MatchingCards> {
 
   void checkMatch() async {
     if (prevLeftSelection != null && prevRightSelection != null) {
-      final left = leftList[prevLeftSelection!].name;
-      final right = rightList[prevRightSelection!].name;
-      final status = matchingCardBoard.getStatus(left, right);
+      final leftCard = leftList[prevLeftSelection!];
+      final rightCard = rightList[prevRightSelection!];
+      final status = matchingCardBoard.checkMatch(leftCard, rightCard);
       final isMatch = status == MatchStatus.match;
+      matchingCardBoard.setMatchPoints(isMatch);
+      if (isMatch) {
+        updateScore();
+        matchingCardBoard.removeFromSelectedCards(leftList[prevLeftSelection!]);
+      }
       setState(() {
         leftList[prevLeftSelection!].status = status;
         rightList[prevRightSelection!].status = status;
-        if (isMatch) {
-          numberOfMatches += 1;
-          numberOfConsecutiveMatch += 1;
-        } else {
-          numberOfConsecutiveMatch = 0;
-        }
       });
-      if (isMatch) {
-        calculateScore();
-        removeCardMatch();
-      }
-
       resetBoard(prevLeftSelection, prevRightSelection, isMatch);
     }
-  }
-
-  void removeCardMatch() {
-    setState(() {
-      matchingCardBoard.removeFromSelectedCards(
-          leftList[prevLeftSelection!].name,
-          rightList[prevRightSelection!].name);
-    });
   }
 
   Future<void> resetBoard(leftIndex, rightIndex, isMatch) async {
@@ -145,23 +117,23 @@ class MatchingCardsState extends State<MatchingCards> {
         leftList[leftIndex].selected = false;
         rightList[rightIndex].selected = false;
         if (leftList[leftIndex].status == MatchStatus.noMatch) {
-          leftList[leftIndex].status = MatchStatus.reset;
-          rightList[rightIndex].status = MatchStatus.reset;
+          leftList[leftIndex].status = MatchStatus.visible;
+          rightList[rightIndex].status = MatchStatus.visible;
+        } else {
+          leftList[leftIndex].status = MatchStatus.hidden;
+          rightList[rightIndex].status = MatchStatus.hidden;
         }
       });
-      if (isMatch && numberOfMatches % 4 == 0) {
+      if (isMatch && matchingCardBoard.numberOfMatches % 4 == 0) {
         fillCards();
       }
     });
   }
 
-  calculateScore() {
-    var points = matchingCardBoard.points;
-    if (numberOfConsecutiveMatch > 1) {
-      points += matchingCardBoard.bonusPoints;
-    }
+  void updateScore() {
     setState(() {
-      score += points;
+      numberOfMatches = matchingCardBoard.numberOfMatches;
+      score += matchingCardBoard.calculateScore();
     });
   }
 
@@ -178,8 +150,16 @@ class MatchingCardsState extends State<MatchingCards> {
     );
   }
 
-  getColor(selected) {
+  Color getColor(selected) {
     return selected ? Theme.of(context).colorScheme.secondary : Colors.white;
+  }
+
+  bool isLeftCardVisisble(int cardIndex) {
+    return matchingCardBoard.isCardVisible(leftList[cardIndex]) && gameStarted;
+  }
+
+  bool isRightCardVisible(int cardIndex) {
+    return matchingCardBoard.isCardVisible(rightList[cardIndex]) && gameStarted;
   }
 
   @override
@@ -213,17 +193,19 @@ class MatchingCardsState extends State<MatchingCards> {
                       key: Key('leftCard-$index'),
                       isMatch: leftList[index].status,
                       selected: leftList[index].selected == true,
-                      text: leftList[index].name!,
+                      text: leftList[index].name,
                       isHeldDown: index == leftHeldDown,
-                      disabled: !gameStarted ||
-                          leftList[index].status == MatchStatus.match,
+                      disabled: leftList[index].status == MatchStatus.hidden ||
+                          !gameStarted,
                       onTap: () {
                         leftHeldDown = null;
+                        if (!isLeftCardVisisble(index)) {
+                          return;
+                        }
                         onLeftCardTap(index);
                       },
                       onTapDown: (_) {
-                        if (leftList[index].status == MatchStatus.match ||
-                            !gameStarted) {
+                        if (!isLeftCardVisisble(index)) {
                           return;
                         }
                         setState(() {
@@ -231,8 +213,7 @@ class MatchingCardsState extends State<MatchingCards> {
                         });
                       },
                       onTapCancel: () {
-                        if (leftList[index].status == MatchStatus.match ||
-                            !gameStarted) {
+                        if (!isLeftCardVisisble(index)) {
                           return;
                         }
                         setState(() {
@@ -259,17 +240,19 @@ class MatchingCardsState extends State<MatchingCards> {
                       key: Key('rightCard-$index'),
                       isMatch: rightList[index].status,
                       selected: rightList[index].selected == true,
-                      text: rightList[index].name!,
+                      text: rightList[index].name,
                       isHeldDown: rightHeldDown == index,
-                      disabled: !gameStarted ||
-                          rightList[index].status == MatchStatus.match,
+                      disabled: rightList[index].status == MatchStatus.hidden ||
+                          !gameStarted,
                       onTap: () {
                         rightHeldDown = null;
+                        if (!isRightCardVisible(index)) {
+                          return;
+                        }
                         onRightCardTap(index);
                       },
                       onTapDown: (_) {
-                        if (rightList[index].status == MatchStatus.match ||
-                            !gameStarted) {
+                        if (!isRightCardVisible(index)) {
                           return;
                         }
                         setState(() {
@@ -277,8 +260,7 @@ class MatchingCardsState extends State<MatchingCards> {
                         });
                       },
                       onTapCancel: () {
-                        if (rightList[index].status == MatchStatus.match ||
-                            !gameStarted) {
+                        if (!isRightCardVisible(index)) {
                           return;
                         }
                         setState(() {

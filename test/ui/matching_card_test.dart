@@ -5,13 +5,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 
 import 'package:of_card_match/locator.dart';
+import 'package:of_card_match/ui/matching_cards/custom_card.dart';
 
 import 'package:of_card_match/ui/matching_cards/matching_cards.dart';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:mockito/mockito.dart';
-import 'bot/matching_card_screen_bot.dart';
+import '../bot/matching_card_screen_bot.dart';
 import 'matching_card_test.mocks.dart';
 
 @GenerateMocks([
@@ -63,7 +64,7 @@ void main() {
     await setUpMockHttpClient();
   });
 
-  testWidgets('When the widget is loaded it should display two grids',
+  testWidgets('When the widget is loaded it should display two gridViews',
       (tester) async {
     final cardMatchBot = CardMatchBot(tester);
 
@@ -71,6 +72,67 @@ void main() {
 
     // Verify initial state
     expect(find.byType(GridView), findsNWidgets(2));
+  });
+
+  testWidgets('When the widget is loaded it should display 4 in each gridView',
+      (tester) async {
+    final cardMatchBot = CardMatchBot(tester);
+
+    await cardMatchBot.showBoard();
+
+    // Left Custom Cards
+    final leftCustomCards = find.descendant(
+      of: find.byType(GridView).first,
+      matching: find.byType(CustomCard),
+    );
+
+    expect(leftCustomCards, findsNWidgets(4));
+
+    // Right Custom Cards
+    final rightCustomCards = find.descendant(
+      of: find.byType(GridView).last,
+      matching: find.byType(CustomCard),
+    );
+
+    expect(rightCustomCards, findsNWidgets(4));
+  });
+
+  testWidgets(
+      'When the widget is loaded and the game has not started the customCards should be disabled',
+      (tester) async {
+    final cardMatchBot = CardMatchBot(tester);
+
+    await cardMatchBot.showBoard();
+
+    final customCardFinder = find.byType(CustomCard).first;
+
+    for (int i = 0; i < customCardFinder.evaluate().length; i++) {
+      final CustomCard customCard = tester.widget(customCardFinder.at(i));
+      expect(customCard.disabled, isTrue);
+    }
+  });
+
+  testWidgets(
+      'When the game started the left and right cards should be on visible status before being taped',
+      (tester) async {
+    await tester.runAsync(() async {
+      final cardMatchBot = CardMatchBot(tester);
+
+      await cardMatchBot.showBoard();
+
+      await cardMatchBot.startGame();
+
+      // Check the matchStatus on any random left and right cards
+      final Random random = Random();
+      final int randomIndex =
+          random.nextInt(cardMatchBot.widgetState.leftList.length);
+
+      final leftCard = cardMatchBot.widgetState.leftList[randomIndex];
+      final rightCard = cardMatchBot.widgetState.rightList[randomIndex];
+
+      expect(leftCard.status, MatchStatus.visible);
+      expect(rightCard.status, MatchStatus.visible);
+    });
   });
 
   testWidgets(
@@ -102,29 +164,6 @@ void main() {
   });
 
   testWidgets(
-      'When the game started and the left and right cards should be on reset status before being taped',
-      (tester) async {
-    await tester.runAsync(() async {
-      final cardMatchBot = CardMatchBot(tester);
-
-      await cardMatchBot.showBoard();
-
-      await cardMatchBot.startGame();
-
-      // Check the matchStatus on any random left and right cards
-      final Random random = Random();
-      final int randomIndex =
-          random.nextInt(cardMatchBot.widgetState.leftList.length);
-
-      final leftCard = cardMatchBot.widgetState.leftList[randomIndex];
-      final rightCard = cardMatchBot.widgetState.rightList[randomIndex];
-
-      expect(leftCard.status, MatchStatus.reset);
-      expect(rightCard.status, MatchStatus.reset);
-    });
-  });
-
-  testWidgets(
       'When the game started and two tapped cards match then status of the cards are match',
       (tester) async {
     await tester.runAsync(() async {
@@ -151,7 +190,7 @@ void main() {
   });
 
   testWidgets(
-      'When two tapped cards dont match their status should change to noMatch',
+      'When two tapped cards dont match their status of the cards are noMatch',
       (tester) async {
     await tester.runAsync(() async {
       final cardMatchBot = CardMatchBot(tester);
@@ -198,7 +237,7 @@ void main() {
   });
 
   testWidgets(
-      'When there is a consecutive match the score should be 10+ and a 15+ bonus = 35pts',
+      'When there is a consecutive match the score should be +10 and a +15 bonus = 35pts',
       (tester) async {
     await tester.runAsync(() async {
       final cardMatchBot = CardMatchBot(tester);
