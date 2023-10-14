@@ -5,13 +5,13 @@ import 'package:of_card_match/ui/matching_cards/matching_cards.dart';
 class MatchingCardBoard {
   final int points = 10;
   final int bonusPoints = 15;
-  final List<Player> cardDeck;
+  final List<PlayerCard> cardDeck;
   int _numberOfMatches = 0;
   int _numberOfConsecutiveMatch = 0;
-  List<Player> _selectedPlayers = [];
+  List<PlayerCard> _selectedCards = [];
 
   get numberOfMatches => _numberOfMatches;
-  get selectedPlayers => _selectedPlayers;
+  get selectedCards => _selectedCards;
   get numberOfConsecutiveMatch => _numberOfConsecutiveMatch;
 
   MatchingCardBoard({required this.cardDeck});
@@ -22,15 +22,15 @@ class MatchingCardBoard {
 
   void startGame(int count) {
     _shuffleCards();
-    _selectedPlayers = cardDeck.take(count).toList();
+    _selectedCards = cardDeck.take(count).toList();
   }
 
   void refillCard() {
-    _selectedPlayers.add(cardDeck.first);
+    _selectedCards.add(cardDeck.first);
   }
 
   List<MatchingCard> getShuffledCardsBasedOnTeams() {
-    final cards = _selectedPlayers
+    final cards = _selectedCards
         .map((player) => MatchingCard(
             id: player.id,
             name: player.team,
@@ -42,7 +42,7 @@ class MatchingCardBoard {
   }
 
   List<MatchingCard> getShuffledCardsBasedOnPlayers() {
-    final cards = _selectedPlayers
+    final cards = _selectedCards
         .map((player) => MatchingCard(
             id: player.id,
             name: player.player,
@@ -62,7 +62,7 @@ class MatchingCardBoard {
   }
 
   void removeFromSelectedCards(MatchingCard card) {
-    _selectedPlayers.removeWhere((player) => card.id == player.id);
+    _selectedCards.removeWhere((player) => card.id == player.id);
   }
 
   void setMatchPoints(bool isMatch) {

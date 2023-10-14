@@ -29,7 +29,7 @@ void main() {
       final repository = PlayersRepository(client);
 
       expect(await repository.getTopPlayersFromCompetition('12'),
-          isA<List<Player>>());
+          isA<List<PlayerCard>>());
     });
   });
 }

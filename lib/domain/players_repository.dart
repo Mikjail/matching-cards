@@ -9,7 +9,7 @@ class PlayersRepository implements IPlayersRepository {
   PlayersRepository(this.client);
 
   @override
-  Future<List<Player>> getTopPlayersFromCompetition(
+  Future<List<PlayerCard>> getTopPlayersFromCompetition(
       String competitionId) async {
     final response = await client.get(Uri.parse(
         'https://scores-api.onefootball.com/v1/en/competitions/$competitionId/players/top?size=50'));
@@ -17,8 +17,9 @@ class PlayersRepository implements IPlayersRepository {
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
 
-      final List<Player> list =
-          data.map<Player>((player) => Player.fromJson(player)).toList();
+      final List<PlayerCard> list = data
+          .map<PlayerCard>((player) => PlayerCard.fromJson(player))
+          .toList();
 
       return list;
     } else {

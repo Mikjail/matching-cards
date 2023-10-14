@@ -7,57 +7,57 @@ import 'package:of_card_match/domain/players.dart';
 import 'package:of_card_match/ui/matching_cards/matching_cards.dart';
 
 void main() {
-  final List<Player> players = [
-    Player(
+  final List<PlayerCard> players = [
+    PlayerCard(
       id: 1,
       team: 'team1',
       player: 'player1',
       imgPlayer: 'imgPlayer1',
       imgTeam: 'imgTeam1',
     ),
-    Player(
+    PlayerCard(
       id: 2,
       team: 'team2',
       player: 'player2',
       imgPlayer: 'imgPlayer2',
       imgTeam: 'imgTeam2',
     ),
-    Player(
+    PlayerCard(
       id: 3,
       team: 'team3',
       player: 'player3',
       imgPlayer: 'imgPlayer3',
       imgTeam: 'imgTeam3',
     ),
-    Player(
+    PlayerCard(
       id: 4,
       team: 'team4',
       player: 'player4',
       imgPlayer: 'imgPlayer4',
       imgTeam: 'imgTeam4',
     ),
-    Player(
+    PlayerCard(
       id: 5,
       team: 'team5',
       player: 'player5',
       imgPlayer: 'imgPlayer5',
       imgTeam: 'imgTeam5',
     ),
-    Player(
+    PlayerCard(
       id: 6,
       team: 'team6',
       player: 'player6',
       imgPlayer: 'imgPlayer6',
       imgTeam: 'imgTeam6',
     ),
-    Player(
+    PlayerCard(
       id: 7,
       team: 'team7',
       player: 'player7',
       imgPlayer: 'imgPlayer7',
       imgTeam: 'imgTeam7',
     ),
-    Player(
+    PlayerCard(
       id: 8,
       team: 'team8',
       player: 'player8',
@@ -76,7 +76,7 @@ void main() {
   test(
       'When a game has started there should be the same number of cards selected as the number of cards to play',
       () {
-    expect(matchingCardBoard.selectedPlayers.length, cardsToPlay);
+    expect(matchingCardBoard.selectedCards.length, cardsToPlay);
   });
 
   test(
@@ -124,7 +124,7 @@ void main() {
       () async {
     final card = matchingCardBoard.getShuffledCardsBasedOnTeams().first;
     matchingCardBoard.removeFromSelectedCards(card);
-    expect(matchingCardBoard.selectedPlayers.length, 3);
+    expect(matchingCardBoard.selectedCards.length, 3);
   });
 
   test(

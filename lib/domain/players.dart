@@ -1,11 +1,11 @@
-class Player {
+class PlayerCard {
   final int id;
   final String team;
   final String player;
   final String imgPlayer;
   final String imgTeam;
 
-  Player({
+  PlayerCard({
     required this.id,
     required this.team,
     required this.player,
@@ -13,8 +13,8 @@ class Player {
     required this.imgTeam,
   });
 
-  factory Player.fromJson(Map<String, dynamic> json) {
-    return Player(
+  factory PlayerCard.fromJson(Map<String, dynamic> json) {
+    return PlayerCard(
       id: json['id'],
       team: json['nationalTeam']['name'],
       player: json['name'],

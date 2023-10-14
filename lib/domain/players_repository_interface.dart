@@ -1,5 +1,5 @@
 import 'package:of_card_match/domain/players.dart';
 
 abstract class IPlayersRepository {
-  Future<List<Player>> getTopPlayersFromCompetition(String competitionId);
+  Future<List<PlayerCard>> getTopPlayersFromCompetition(String competitionId);
 }
