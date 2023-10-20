@@ -97,7 +97,8 @@ class MatchingCardsState extends State<MatchingCards> {
       matchingCardBoard.setMatchPoints(isMatch);
       if (isMatch) {
         updateScore();
-        matchingCardBoard.removeFromSelectedCards(leftList[prevLeftSelection!]);
+        matchingCardBoard.removeFromSelectedCards(
+            leftList[prevLeftSelection!], rightList[prevRightSelection!]);
       }
       setState(() {
         leftList[prevLeftSelection!].status = status;

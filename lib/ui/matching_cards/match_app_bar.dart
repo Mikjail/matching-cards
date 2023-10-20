@@ -89,7 +89,7 @@ Widget countDown(
         debugPrint('Countdown Changed $timeStamp');
       },
       timeFormatterFunction: (defaultFormatterFunction, duration) {
-        return 120 - duration.inSeconds;
+        return contdownDuration - duration.inSeconds;
       },
     ),
   );

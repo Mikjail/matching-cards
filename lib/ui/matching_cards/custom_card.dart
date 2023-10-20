@@ -47,7 +47,7 @@ class CustomCard extends StatelessWidget {
       if (disabled == true) {
         return CustomTheme.grey;
       }
-      return CustomTheme.white;
+      return CustomTheme.white.withOpacity(0.0);
     }
 
     Color textColor = CustomTheme.white;
@@ -63,9 +63,16 @@ class CustomCard extends StatelessWidget {
         duration: Duration(milliseconds: borderDuration),
         decoration: BoxDecoration(
           color: CustomTheme.darkGray,
+          image: text == ''
+              ? const DecorationImage(
+                  image: AssetImage('assets/imgs/of_logo.png'),
+                  fit: BoxFit.none,
+                  scale: 15,
+                )
+              : null,
           border: Border.all(
             color: getColor(),
-            width: selected || isHeldDown == true ? 3.0 : 0.5,
+            width: selected || isHeldDown == true ? 3.0 : 0,
           ),
           borderRadius: BorderRadius.circular(8.0),
         ),

@@ -75,8 +75,9 @@ class MatchingCardBoard {
     return card.status == MatchStatus.visible;
   }
 
-  void removeFromSelectedCards(MatchingCard card) {
-    _selectedCards.removeWhere((player) => card.id == player.id);
+  void removeFromSelectedCards(MatchingCard leftCard, MatchingCard rightCard) {
+    _selectedCards.removeWhere((player) =>
+        leftCard.name == player.team && rightCard.name == player.player);
   }
 
   void setMatchPoints(bool isMatch) {
