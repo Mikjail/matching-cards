@@ -70,7 +70,18 @@ class CustomCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.0),
         ),
         margin: const EdgeInsets.all(5),
-        child: buildCard(text, imageUrl, textColor, disabled, fitCover),
+        child: TweenAnimationBuilder<double?>(
+            tween: Tween<double>(
+              begin: 0,
+              end: disabled ? 0 : 1,
+            ),
+            duration: const Duration(milliseconds: 300),
+            builder: (_, double? opacity, __) {
+              return Opacity(
+                  opacity: opacity ?? 0,
+                  child:
+                      buildCard(text, imageUrl, textColor, disabled, fitCover));
+            }),
       ),
     );
   }
@@ -79,27 +90,20 @@ class CustomCard extends StatelessWidget {
 Widget buildCard(String text, String imageUrl, Color textColor, bool disabled,
     bool fitCover) {
   if (text != '') {
-    return TweenAnimationBuilder<Color?>(
-        tween: ColorTween(
-          begin: textColor.withOpacity(0),
-          end: disabled ? textColor.withOpacity(0) : textColor,
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          color: textColor,
+          fontSize: 16,
         ),
-        duration: const Duration(milliseconds: 300),
-        builder: (_, Color? color, __) {
-          return Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Text(
-              text,
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: color,
-                fontSize: 16,
-              ),
-            ),
-          );
-        });
+      ),
+    );
   }
+
   return Stack(children: [
     buildImage(fitCover, imageUrl),
     Center(child: Image.asset("assets/imgs/vector.png", width: 64, height: 75)),

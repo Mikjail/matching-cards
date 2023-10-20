@@ -58,7 +58,17 @@ class MatchingCardBoard {
   }
 
   MatchStatus checkMatch(MatchingCard left, MatchingCard right) {
-    return left.id == right.id ? MatchStatus.match : MatchStatus.noMatch;
+    final card = _selectedCards.firstWhere(
+      (card) => card.team == left.name && card.player == right.name,
+      orElse: () => PlayerCard(
+        id: -1,
+        team: '',
+        player: '',
+        imgPlayer: '',
+        imgTeam: '',
+      ),
+    );
+    return card.id == -1 ? MatchStatus.noMatch : MatchStatus.match;
   }
 
   bool isCardVisible(MatchingCard card) {
