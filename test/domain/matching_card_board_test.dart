@@ -101,9 +101,17 @@ void main() {
       'When 2 matching cards are selected I should be able to get a MatchStatus.match',
       () {
     final leftCard = MatchingCard(
-        id: 1, name: 'team1', status: MatchStatus.visible, selected: false);
+        id: 1,
+        name: 'team1',
+        status: MatchStatus.visible,
+        selected: false,
+        imageUrl: '');
     final rightCard = MatchingCard(
-        id: 1, name: 'player1', status: MatchStatus.visible, selected: false);
+        id: 1,
+        name: 'player1',
+        status: MatchStatus.visible,
+        selected: false,
+        imageUrl: '');
     final status = matchingCardBoard.checkMatch(leftCard, rightCard);
     expect(status, MatchStatus.match);
   });
@@ -112,9 +120,17 @@ void main() {
       'When 2 unmatching cards are selected I should be able to get a MatchStatus.noMatch',
       () {
     final leftCard = MatchingCard(
-        id: 1, name: 'team1', status: MatchStatus.visible, selected: false);
+        id: 1,
+        name: 'team1',
+        status: MatchStatus.visible,
+        selected: false,
+        imageUrl: '');
     final rightCard = MatchingCard(
-        id: 2, name: 'player2', status: MatchStatus.visible, selected: false);
+        id: 2,
+        name: 'player2',
+        status: MatchStatus.visible,
+        selected: false,
+        imageUrl: '');
     final status = matchingCardBoard.checkMatch(leftCard, rightCard);
     expect(status, MatchStatus.noMatch);
   });

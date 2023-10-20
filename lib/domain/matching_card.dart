@@ -5,10 +5,14 @@ class MatchingCard {
   String name;
   MatchStatus status;
   bool selected;
+  String imageUrl;
+  bool isPlayer;
 
   MatchingCard(
       {required this.id,
       required this.name,
+      required this.imageUrl,
       required this.status,
-      required this.selected});
+      required this.selected,
+      this.isPlayer = true});
 }

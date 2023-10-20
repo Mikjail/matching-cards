@@ -14,9 +14,11 @@ import '../../locator.dart';
 enum MatchStatus { match, noMatch, hidden, visible }
 
 class MatchingCards extends StatefulWidget {
+  final String version;
   final String competitionId;
 
-  const MatchingCards({super.key, this.competitionId = '12'});
+  const MatchingCards(
+      {super.key, this.competitionId = '12', this.version = 'v1'});
 
   @override
   State<MatchingCards> createState() => MatchingCardsState();
@@ -167,12 +169,10 @@ class MatchingCardsState extends State<MatchingCards> {
     return Scaffold(
       body: Column(
         children: [
-          const SizedBox(height: 20),
           MatchAppBar(
               controller: _controller,
               numberOfMatches: numberOfMatches,
               onCountdownFinished: onCountdownFinished),
-          const SizedBox(height: 30),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -183,17 +183,19 @@ class MatchingCardsState extends State<MatchingCards> {
                   shrinkWrap: true,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 1,
-                    childAspectRatio: 2,
-                    mainAxisSpacing: 8.0,
+                    childAspectRatio: 1.5,
+                    mainAxisSpacing: 8,
                   ),
                   itemCount: leftList.length,
                   physics: const NeverScrollableScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
                     return CustomCard(
-                      key: Key('leftCard-$index'),
+                      key: Key('leftCard-${leftList[index].id}'),
                       isMatch: leftList[index].status,
                       selected: leftList[index].selected == true,
-                      text: leftList[index].name,
+                      text: widget.version == 'v1' ? leftList[index].name : '',
+                      fitCover: leftList[index].isPlayer == false,
+                      imageUrl: leftList[index].imageUrl,
                       isHeldDown: index == leftHeldDown,
                       disabled: leftList[index].status == MatchStatus.hidden ||
                           !gameStarted,
@@ -224,23 +226,27 @@ class MatchingCardsState extends State<MatchingCards> {
                   },
                 ),
               ),
+              const SizedBox(
+                width: 14,
+              ),
               Expanded(
                 child: GridView.builder(
                   key: const Key('rightGrid'),
                   shrinkWrap: true,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 1,
-                    childAspectRatio: 2,
-                    mainAxisSpacing: 8.0,
+                    childAspectRatio: 1.5,
+                    mainAxisSpacing: 8,
                   ),
                   itemCount: rightList.length,
                   physics: const NeverScrollableScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
                     return CustomCard(
-                      key: Key('rightCard-$index'),
+                      key: Key('rightCard-${rightList[index].id}'),
                       isMatch: rightList[index].status,
                       selected: rightList[index].selected == true,
-                      text: rightList[index].name,
+                      text: widget.version == 'v1' ? rightList[index].name : '',
+                      imageUrl: rightList[index].imageUrl,
                       isHeldDown: rightHeldDown == index,
                       disabled: rightList[index].status == MatchStatus.hidden ||
                           !gameStarted,
@@ -273,7 +279,6 @@ class MatchingCardsState extends State<MatchingCards> {
               ),
             ],
           ),
-          const SizedBox(height: 30),
           Visibility(
             visible: !gameStarted,
             maintainState: true,

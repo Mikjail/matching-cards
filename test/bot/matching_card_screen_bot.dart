@@ -26,8 +26,8 @@ class CardMatchBot {
     await _tester.pumpAndSettle(const Duration(seconds: 1));
   }
 
-  Future<void> tapCard(String text) async {
-    await _tester.tap(find.text(text));
+  Future<void> tapCard(Key key) async {
+    await _tester.tap(find.byKey(key));
     await _tester.pump();
   }
 

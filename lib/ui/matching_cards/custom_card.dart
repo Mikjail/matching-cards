@@ -5,9 +5,11 @@ import 'package:of_card_match/ui/matching_cards/matching_cards.dart';
 class CustomCard extends StatelessWidget {
   final bool selected;
   final String text;
+  final String imageUrl;
   final MatchStatus isMatch;
   final bool isHeldDown;
   final bool disabled;
+  final bool fitCover;
   final void Function() onTap;
   final void Function(TapDownDetails) onTapDown;
   final void Function() onTapCancel;
@@ -18,7 +20,9 @@ class CustomCard extends StatelessWidget {
     this.isMatch = MatchStatus.hidden,
     this.disabled = false,
     this.selected = false,
-    required this.text,
+    this.imageUrl = '',
+    this.text = '',
+    this.fitCover = false,
     required this.onTap,
     required this.onTapDown,
     required this.onTapCancel,
@@ -58,34 +62,122 @@ class CustomCard extends StatelessWidget {
         alignment: Alignment.center,
         duration: Duration(milliseconds: borderDuration),
         decoration: BoxDecoration(
+          color: CustomTheme.darkGray,
           border: Border.all(
             color: getColor(),
-            width: selected || isHeldDown == true ? 4.0 : 1.0,
+            width: selected || isHeldDown == true ? 3.0 : 0.5,
           ),
           borderRadius: BorderRadius.circular(8.0),
         ),
         margin: const EdgeInsets.all(5),
-        child: TweenAnimationBuilder<Color?>(
-            tween: ColorTween(
-              begin: textColor.withOpacity(0),
-              end: disabled ? textColor.withOpacity(0) : textColor,
-            ),
-            duration: const Duration(milliseconds: 300),
-            builder: (_, Color? color, __) {
-              return Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Text(
-                  text,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 16,
-                  ),
-                ),
-              );
-            }),
+        child: buildCard(text, imageUrl, textColor, disabled, fitCover),
       ),
     );
   }
+}
+
+Widget buildCard(String text, String imageUrl, Color textColor, bool disabled,
+    bool fitCover) {
+  if (text != '') {
+    return TweenAnimationBuilder<Color?>(
+        tween: ColorTween(
+          begin: textColor.withOpacity(0),
+          end: disabled ? textColor.withOpacity(0) : textColor,
+        ),
+        duration: const Duration(milliseconds: 300),
+        builder: (_, Color? color, __) {
+          return Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: color,
+                fontSize: 16,
+              ),
+            ),
+          );
+        });
+  }
+  return Stack(children: [
+    buildImage(fitCover, imageUrl),
+    Center(child: Image.asset("assets/imgs/vector.png", width: 64, height: 75)),
+  ]);
+}
+
+Widget buildImage(bool fitCover, String imageUrl) {
+  if (fitCover == false) {
+    return Center(
+      child: ClipPath(
+        clipper: TriangleClipper(),
+        child: Image.network(
+          imageUrl,
+          width: 89,
+          height: 70,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) =>
+              Container(child: const Icon(Icons.error)),
+        ),
+      ),
+    );
+  }
+  return Center(
+    child: CustomPaint(
+      painter: TrianglePainter(),
+      child: Image.network(
+        imageUrl,
+        width: 55,
+        height: 70,
+        errorBuilder: (context, error, stackTrace) =>
+            Container(child: const Icon(Icons.error)),
+      ),
+    ),
+  );
+}
+
+class TriangleClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+
+    path.moveTo(size.width * 0.1729000, size.height * 0.0066000);
+
+    path.lineTo(size.width * 0.1834000, size.height * 0.8458000);
+
+    path.lineTo(size.width * 0.4965000, size.height * 1.0010000);
+    // bottom right
+    path.lineTo(size.width * 0.7976000, size.height * 0.8594000);
+    path.lineTo(size.width * 0.8140000, size.height * 0.0039000);
+    path.lineTo(size.width * 0.1729000, size.height * 0.0066000);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(TriangleClipper oldClipper) => false;
+}
+
+class TrianglePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Color.fromARGB(255, 255, 255, 255)
+      ..style = PaintingStyle.fill;
+
+    final path = Path();
+
+    path.moveTo(-1, -1);
+    path.lineTo(-1, size.height * 0.8558000);
+    path.lineTo(size.width * 0.5965000, size.height * 1.0010000);
+    path.lineTo(size.width, size.height * 0.8694000);
+    path.lineTo(size.width + 1, size.height * 0.0059000);
+    path.lineTo(size.width * 0.1729000, size.height * 0.0066000);
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(TrianglePainter oldDelegate) => false;
 }

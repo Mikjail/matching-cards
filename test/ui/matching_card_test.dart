@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import 'package:mockito/annotations.dart';
 
 import 'package:of_card_match/locator.dart';
@@ -65,6 +66,8 @@ void main() {
   testWidgets('When the widget is loaded it should display two gridViews',
       (tester) async {
     final cardMatchBot = CardMatchBot(tester);
+
+    await adjustSize();
 
     await cardMatchBot.showBoard();
 
@@ -143,21 +146,17 @@ void main() {
 
       await cardMatchBot.startGame();
 
-      const index = 3;
+      await cardMatchBot.tapCard(const Key('leftCard-134'));
 
-      // Tap a card inside the left grid
-      await tester.tap(find.byKey(const Key('leftCard-$index')));
+      await cardMatchBot.tapCard(const Key('rightCard-134'));
 
-      await tester.pumpAndSettle(const Duration(seconds: 1));
+      final leftCard = cardMatchBot.widgetState.leftList
+          .firstWhere((element) => element.selected == true);
+      final rightCard = cardMatchBot.widgetState.rightList
+          .firstWhere((element) => element.selected == true);
 
-      // Access the state of the widget and verify that the cards are selected
-      expect(cardMatchBot.widgetState.leftList[index].selected, isTrue);
-
-      await tester.tap(find.byKey(const Key('rightCard-$index')));
-
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-
-      expect(cardMatchBot.widgetState.rightList[index].selected, isTrue);
+      expect(leftCard.selected, isTrue);
+      expect(rightCard.selected, isTrue);
     });
   });
 
@@ -171,19 +170,17 @@ void main() {
 
       await cardMatchBot.startGame();
 
-      await cardMatchBot.tapCard('Argentina');
+      await cardMatchBot.tapCard(const Key('leftCard-134'));
 
-      await cardMatchBot.tapCard('Lionel Messi');
+      await cardMatchBot.tapCard(const Key('rightCard-134'));
 
       final leftCard = cardMatchBot.widgetState.leftList
           .firstWhere((element) => element.selected == true);
       final rightCard = cardMatchBot.widgetState.rightList
           .firstWhere((element) => element.selected == true);
 
-      expect(leftCard.selected, isTrue);
-      expect(rightCard.selected, isTrue);
       expect(leftCard.status, MatchStatus.match);
-      expect(leftCard.status, MatchStatus.match);
+      expect(rightCard.status, MatchStatus.match);
     });
   });
 
@@ -197,16 +194,14 @@ void main() {
 
       await cardMatchBot.startGame();
 
-      // Check initial state
-      // Access the state of the widget and verify that the state is defaulted to reset
-      var leftCard = cardMatchBot.widgetState.leftList
-          .firstWhere((card) => card.name == 'Brazil');
-      var rightCard = cardMatchBot.widgetState.rightList
-          .firstWhere((card) => card.name == 'Cristiano Ronaldo');
+      await cardMatchBot.tapCard(const Key('leftCard-134'));
 
-      await cardMatchBot.tapCard('Brazil');
+      await cardMatchBot.tapCard(const Key('rightCard-823'));
 
-      await cardMatchBot.tapCard('Cristiano Ronaldo');
+      final leftCard = cardMatchBot.widgetState.leftList
+          .firstWhere((element) => element.selected == true);
+      final rightCard = cardMatchBot.widgetState.rightList
+          .firstWhere((element) => element.selected == true);
 
       expect(leftCard.status, MatchStatus.noMatch);
       expect(rightCard.status, MatchStatus.noMatch);
@@ -223,9 +218,9 @@ void main() {
 
       await cardMatchBot.startGame();
 
-      await cardMatchBot.tapCard('Argentina');
+      await cardMatchBot.tapCard(const Key('leftCard-134'));
 
-      await cardMatchBot.tapCard('Lionel Messi');
+      await cardMatchBot.tapCard(const Key('rightCard-134'));
 
       // Access the state of the widget and verify that the state is updated
       // first match = 10
@@ -244,13 +239,13 @@ void main() {
 
       await cardMatchBot.startGame();
 
-      await cardMatchBot.tapCard('Argentina');
+      await cardMatchBot.tapCard(const Key('leftCard-134'));
 
-      await cardMatchBot.tapCard('Lionel Messi');
+      await cardMatchBot.tapCard(const Key('rightCard-134'));
 
-      await cardMatchBot.tapCard('Brazil');
+      await cardMatchBot.tapCard(const Key('leftCard-823'));
 
-      await cardMatchBot.tapCard('Neymar');
+      await cardMatchBot.tapCard(const Key('rightCard-823'));
 
       // Access the state of the widget and verify that the state is updated
       // first match = 10

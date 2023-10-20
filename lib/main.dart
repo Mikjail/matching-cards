@@ -21,7 +21,8 @@ class MyApp extends StatelessWidget {
       title: 'OneFootball - Matching Cards',
       routes: {
         '/': (context) => StartScreen(),
-        '/matchingCards': (context) => const MatchingCards(competitionId: '12'),
+        '/matchingCards': (context) =>
+            const MatchingCards(competitionId: '12', version: 'v1'),
         '/finalScore': (context) => const FinalScore(),
       },
       theme: ThemeData(

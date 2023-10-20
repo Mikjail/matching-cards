@@ -16,10 +16,14 @@ class PlayerCard {
   factory PlayerCard.fromJson(Map<String, dynamic> json) {
     return PlayerCard(
       id: json['id'],
-      team: json['nationalTeam']['name'],
+      team: json['nationalTeam'] != null
+          ? json['nationalTeam']['name']
+          : json['clubTeam']['name'],
       player: json['name'],
       imgPlayer: json['imageSrc'],
-      imgTeam: json['nationalTeam']['logoUrls'][0]['url'],
+      imgTeam: json['nationalTeam'] != null
+          ? json['nationalTeam']['logoUrls'][1]['url']
+          : json['clubTeam']['logoUrls'][1]['url'],
     );
   }
 }

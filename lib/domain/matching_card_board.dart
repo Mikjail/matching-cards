@@ -35,7 +35,9 @@ class MatchingCardBoard {
             id: player.id,
             name: player.team,
             status: MatchStatus.visible,
-            selected: false))
+            selected: false,
+            imageUrl: player.imgTeam,
+            isPlayer: false))
         .toList();
     cards.shuffle();
     return cards;
@@ -47,7 +49,9 @@ class MatchingCardBoard {
             id: player.id,
             name: player.player,
             status: MatchStatus.visible,
-            selected: false))
+            selected: false,
+            imageUrl: player.imgPlayer,
+            isPlayer: true))
         .toList();
     cards.shuffle();
     return cards;

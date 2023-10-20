@@ -117,7 +117,7 @@ class _StartScreenState extends State<StartScreen> {
                   ),
                 ),
                 Positioned(
-                  bottom: 20,
+                  bottom: 50,
                   left: 20,
                   right: 20,
                   child: ElevatedButton(
@@ -126,11 +126,32 @@ class _StartScreenState extends State<StartScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => MatchingCards(
-                              competitionId: _competitions[_currentPage].id),
+                            competitionId: _competitions[_currentPage].id,
+                            version: 'v1',
+                          ),
                         ),
                       );
                     },
-                    child: const Text('Start Game'),
+                    child: const Text('Start Game with Text'),
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 20,
+                  right: 20,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MatchingCards(
+                            competitionId: _competitions[_currentPage].id,
+                            version: 'v2',
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Text('Start Game with images'),
                   ),
                 ),
               ],

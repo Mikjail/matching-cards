@@ -10,4 +10,5 @@ class CustomTheme {
   static Color get grey => const Color.fromRGBO(243, 243, 244, 0.3);
   static Color get blue => const Color.fromARGB(255, 0, 0, 255);
   static Color get lightGray => const Color.fromARGB(150, 255, 255, 255);
+  static Color get darkGray => const Color.fromARGB(255, 47, 47, 47);
 }
