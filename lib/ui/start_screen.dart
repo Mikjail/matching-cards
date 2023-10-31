@@ -22,143 +22,90 @@ class StartScreen extends StatefulWidget {
 }
 
 class _StartScreenState extends State<StartScreen> {
-  int _currentPage = 0;
-  final List<Competition> _competitions = [
-    Competition(
-        id: "12",
-        name: "FIFA World Cup",
-        logo:
-            "https://images.onefootball.com/icons/leagueColoredCompetition/128/12.png",
-        alt: "Icon: FIFA World Cup"),
-    Competition(
-        id: "5",
-        name: "UEFA Champions League",
-        logo:
-            "https://images.onefootball.com/icons/leagueColoredCompetition/128/5.png",
-        alt: "Icon: UEFA Champions League"),
-    Competition(
-        id: "4",
-        name: "Serie A",
-        logo:
-            "https://images.onefootball.com/icons/leagueColoredCompetition/128/4.png",
-        alt: "Icon: Serie A"),
-    Competition(
-        id: "1",
-        name: "Bundesliga",
-        logo:
-            "https://images.onefootball.com/icons/leagueColoredCompetition/128/1.png",
-        alt: "Icon: Bundesliga"),
-    Competition(
-        id: "10",
-        name: "LaLiga",
-        logo:
-            "https://images.onefootball.com/icons/leagueColoredCompetition/128/10.png",
-        alt: "Icon: LaLiga")
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          const SizedBox(height: 60),
-          Text(_competitions[_currentPage].name,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: CustomTheme.white,
-              )),
-          SizedBox(
-            height: 500,
-            child: Stack(
+      body: Container(
+        decoration: const BoxDecoration(
+          // Box decoration takes a gradient
+          gradient: LinearGradient(
+            begin: Alignment(0.00, 5.00),
+            end: Alignment(0, -0.75),
+            colors: [Color(0xEAD7FF47), Color(0x00D7FF47)],
+          ),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+                child: Column(
               children: [
-                PageView.builder(
-                  itemCount: _competitions.length,
-                  itemBuilder: (context, index) {
-                    return Center(
-                      child: Image.network(
-                        _competitions[_currentPage].logo,
-                        fit: BoxFit.cover,
-                      ),
-                    );
-                  },
-                  onPageChanged: (index) {
-                    setState(() {
-                      _currentPage = index;
-                    });
-                  },
+                const SizedBox(
+                  height: 60,
                 ),
-                Positioned(
-                  left: 0,
-                  top: 0,
-                  bottom: 0,
-                  child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _currentPage =
-                            (_currentPage - 1) % _competitions.length;
-                      });
-                    },
-                    icon: Icon(Icons.arrow_left),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Text(
+                    'OF Card Match',
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: CustomTheme.white,
+                    ),
                   ),
                 ),
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  bottom: 0,
-                  child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _currentPage =
-                            (_currentPage + 1) % _competitions.length;
-                      });
-                    },
-                    icon: Icon(Icons.arrow_right),
+                const SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    'The objective of the game is to match players with teams!',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: CustomTheme.white,
+                    ),
                   ),
                 ),
-                Positioned(
-                  bottom: 50,
-                  left: 20,
-                  right: 20,
+                const SizedBox(
+                  height: 60,
+                ),
+                Center(
+                  child: Image.asset("assets/imgs/quiz-badge.png",
+                      width: 130, height: 130),
+                ),
+              ],
+            )),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.all(30), // Adjust the value as needed
+                child: Container(
+                  width:
+                      double.infinity, // Makes the button as wide as its parent
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MatchingCards(
-                            competitionId: _competitions[_currentPage].id,
-                            version: 'v1',
-                          ),
-                        ),
-                      );
-                    },
-                    child: const Text('Start Game with Text'),
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  left: 20,
-                  right: 20,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MatchingCards(
-                            competitionId: _competitions[_currentPage].id,
+                          builder: (context) => const MatchingCards(
+                            competitionId: '12',
                             version: 'v2',
                           ),
                         ),
                       );
                     },
-                    child: const Text('Start Game with images'),
+                    child: const Text('Play'),
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
+
+//
