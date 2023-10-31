@@ -36,36 +36,8 @@ void main() {
       imgPlayer: 'imgPlayer4',
       imgTeam: 'imgTeam4',
     ),
-    PlayerCard(
-      id: 5,
-      team: 'team5',
-      player: 'player5',
-      imgPlayer: 'imgPlayer5',
-      imgTeam: 'imgTeam5',
-    ),
-    PlayerCard(
-      id: 6,
-      team: 'team6',
-      player: 'player6',
-      imgPlayer: 'imgPlayer6',
-      imgTeam: 'imgTeam6',
-    ),
-    PlayerCard(
-      id: 7,
-      team: 'team7',
-      player: 'player7',
-      imgPlayer: 'imgPlayer7',
-      imgTeam: 'imgTeam7',
-    ),
-    PlayerCard(
-      id: 8,
-      team: 'team8',
-      player: 'player8',
-      imgPlayer: 'imgPlayer8',
-      imgTeam: 'imgTeam8',
-    ),
   ];
-  var matchingCardBoard;
+  late MatchingCardBoard matchingCardBoard;
   const cardsToPlay = 4;
 
   setUp(() {
@@ -135,11 +107,21 @@ void main() {
     expect(status, MatchStatus.noMatch);
   });
 
-  test(
-      'When there is 2 matching cards I should be able to from the selected cards',
+  test('When there is 2 matching cards then the selected car should be removed',
       () async {
-    final card = matchingCardBoard.getShuffledCardsBasedOnTeams().first;
-    matchingCardBoard.removeFromSelectedCards(card);
+    final leftCard = MatchingCard(
+        id: 1,
+        name: 'team1',
+        status: MatchStatus.visible,
+        selected: false,
+        imageUrl: '');
+    final rightCard = MatchingCard(
+        id: 2,
+        name: 'player1',
+        status: MatchStatus.visible,
+        selected: false,
+        imageUrl: '');
+    matchingCardBoard.removeFromSelectedCards(leftCard, rightCard);
     expect(matchingCardBoard.selectedCards.length, 3);
   });
 

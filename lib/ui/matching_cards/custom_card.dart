@@ -127,8 +127,7 @@ Widget buildImage(bool fitCover, String imageUrl) {
           width: 89,
           height: 70,
           fit: BoxFit.contain,
-          errorBuilder: (context, error, stackTrace) =>
-              Container(child: const Icon(Icons.error)),
+          errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
         ),
       ),
     );
@@ -140,8 +139,7 @@ Widget buildImage(bool fitCover, String imageUrl) {
         imageUrl,
         width: 55,
         height: 70,
-        errorBuilder: (context, error, stackTrace) =>
-            Container(child: const Icon(Icons.error)),
+        errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
       ),
     ),
   );
