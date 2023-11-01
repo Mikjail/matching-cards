@@ -40,7 +40,11 @@ class CardMatchBot {
 Widget makeSut() {
   return const MaterialApp(
     title: 'OneFootball - Matching Cards',
-    home: MatchingCards(key: Key('myMatchingGrid'), competitionId: '12'),
+    home: MatchingCards(
+      key: Key('myMatchingGrid'),
+      competitionId: '12',
+      isTest: true,
+    ),
   );
 }
 

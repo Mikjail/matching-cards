@@ -16,9 +16,13 @@ enum MatchStatus { match, noMatch, hidden, visible }
 class MatchingCards extends StatefulWidget {
   final String version;
   final String competitionId;
+  final bool isTest;
 
   const MatchingCards(
-      {super.key, this.competitionId = '12', this.version = 'v1'});
+      {super.key,
+      this.competitionId = '12',
+      this.version = 'v1',
+      this.isTest = false});
 
   @override
   State<MatchingCards> createState() => MatchingCardsState();
@@ -38,6 +42,8 @@ class MatchingCardsState extends State<MatchingCards> {
   List<MatchingCard> leftList = [];
   List<MatchingCard> rightList = [];
 
+  get controller => _controller;
+
   @override
   void initState() {
     loadData();
@@ -49,13 +55,16 @@ class MatchingCardsState extends State<MatchingCards> {
         .getTopPlayersFromCompetition(widget.competitionId);
     matchingCardBoard = MatchingCardBoard(cardDeck: players);
     fillCards();
+    startTimer();
   }
 
   void startTimer() {
-    _controller.start();
-    setState(() {
-      gameStarted = true;
-    });
+    if (!widget.isTest) {
+      _controller.start();
+      setState(() {
+        gameStarted = true;
+      });
+    }
   }
 
   void fillCards() {
@@ -174,6 +183,9 @@ class MatchingCardsState extends State<MatchingCards> {
               controller: _controller,
               score: score,
               onCountdownFinished: onCountdownFinished),
+          const SizedBox(
+            height: 25,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -280,16 +292,6 @@ class MatchingCardsState extends State<MatchingCards> {
               ),
             ],
           ),
-          Visibility(
-            visible: !gameStarted,
-            maintainState: true,
-            child: Align(
-              child: ElevatedButton(
-                onPressed: startTimer,
-                child: const Text('LET\'S GO!'),
-              ),
-            ),
-          )
         ],
       ),
     );

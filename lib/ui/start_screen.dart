@@ -81,10 +81,14 @@ class _StartScreenState extends State<StartScreen> {
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.all(30), // Adjust the value as needed
-                child: Container(
+                child: SizedBox(
                   width:
                       double.infinity, // Makes the button as wide as its parent
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          CustomTheme.white, // Change this to the desired color
+                    ),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -96,7 +100,12 @@ class _StartScreenState extends State<StartScreen> {
                         ),
                       );
                     },
-                    child: const Text('Play'),
+                    child: Text(
+                      'Play',
+                      style: TextStyle(
+                        color: CustomTheme.backgroundPrimary,
+                      ),
+                    ),
                   ),
                 ),
               ),

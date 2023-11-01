@@ -65,9 +65,9 @@ class CustomCard extends StatelessWidget {
           color: CustomTheme.darkGray,
           image: text == ''
               ? const DecorationImage(
-                  image: AssetImage('assets/imgs/of_logo.png'),
+                  image: AssetImage('assets/imgs/card_back.png'),
                   fit: BoxFit.none,
-                  scale: 15,
+                  scale: 4,
                 )
               : null,
           border: Border.all(
@@ -79,7 +79,7 @@ class CustomCard extends StatelessWidget {
         margin: const EdgeInsets.all(5),
         child: TweenAnimationBuilder<double?>(
             tween: Tween<double>(
-              begin: 0,
+              begin: 1,
               end: disabled ? 0 : 1,
             ),
             duration: const Duration(milliseconds: 300),
