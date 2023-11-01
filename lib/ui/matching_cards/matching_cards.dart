@@ -172,7 +172,7 @@ class MatchingCardsState extends State<MatchingCards> {
         children: [
           MatchAppBar(
               controller: _controller,
-              numberOfMatches: numberOfMatches,
+              score: score,
               onCountdownFinished: onCountdownFinished),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

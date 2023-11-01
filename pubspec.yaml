@@ -65,6 +65,7 @@ flutter:
     - assets/imgs/vector.png
     - assets/imgs/of_logo.png
     - assets/imgs/quiz-badge.png
+    - assets/imgs/score.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

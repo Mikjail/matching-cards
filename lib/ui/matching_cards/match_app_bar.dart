@@ -9,42 +9,63 @@ class MatchAppBar extends StatelessWidget {
   const MatchAppBar({
     super.key,
     required CountDownController controller,
-    required this.numberOfMatches,
+    required this.score,
     required this.onCountdownFinished,
   }) : _controller = controller;
 
   final CountDownController _controller;
-  final int numberOfMatches;
+  final int score;
   final contdownDuration = 30;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        SizedBox(
-          width: 80,
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => StartScreen()));
-              },
-              color: CustomTheme.white,
+    return SafeArea(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(
+            width: 140,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => StartScreen()));
+                },
+                color: CustomTheme.white,
+              ),
             ),
           ),
-        ),
-        countDown(contdownDuration, _controller, onCountdownFinished, context),
-        SizedBox(
-          width: 80,
-          child: Text(
-            'Matches: ${numberOfMatches.toString()}',
-            style: TextStyle(color: CustomTheme.white),
-          ),
-        ),
-      ],
+          countDown(
+              contdownDuration, _controller, onCountdownFinished, context),
+          Row(children: [
+            Image.asset(
+              'assets/imgs/score.png',
+              fit: BoxFit.contain,
+              width: 40,
+            ),
+            SizedBox(
+              width: 95,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: CustomTheme.scoreBackground,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+                child: Text(
+                  score.toString(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: CustomTheme.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ]),
+        ],
+      ),
     );
   }
 }
@@ -56,17 +77,17 @@ Widget countDown(
   BuildContext context,
 ) {
   return SizedBox(
-    width: 70.0,
-    height: 70.0,
+    width: 60.0,
+    height: 60.0,
     child: CircularCountDownTimer(
       duration: contdownDuration,
       initialDuration: 0,
       controller: controller,
       width: MediaQuery.of(context).size.width / 2,
       height: MediaQuery.of(context).size.height / 2,
-      ringColor: CustomTheme.blue,
+      ringColor: CustomTheme.grey,
       ringGradient: null,
-      fillColor: CustomTheme.lightGray,
+      fillColor: CustomTheme.white,
       fillGradient: null,
       backgroundGradient: null,
       strokeWidth: 4.0,

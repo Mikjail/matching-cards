@@ -18,7 +18,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'OneFootball - Matching Cards',
       routes: {
         '/': (context) => StartScreen(),
         '/matchingCards': (context) =>

@@ -11,4 +11,5 @@ class CustomTheme {
   static Color get blue => const Color.fromARGB(255, 0, 0, 255);
   static Color get lightGray => const Color.fromARGB(150, 255, 255, 255);
   static Color get darkGray => const Color.fromARGB(255, 47, 47, 47);
+  static Color get scoreBackground => const Color.fromARGB(255, 26, 26, 26);
 }
