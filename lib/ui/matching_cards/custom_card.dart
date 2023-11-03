@@ -79,7 +79,7 @@ class CustomCard extends StatelessWidget {
         margin: const EdgeInsets.all(5),
         child: TweenAnimationBuilder<double?>(
             tween: Tween<double>(
-              begin: 1,
+              begin: 0,
               end: disabled ? 0 : 1,
             ),
             duration: const Duration(milliseconds: 300),

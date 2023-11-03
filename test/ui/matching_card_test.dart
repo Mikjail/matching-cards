@@ -146,9 +146,9 @@ void main() {
 
       await cardMatchBot.startGame();
 
-      await cardMatchBot.tapCard(const Key('leftCard-134'));
+      await cardMatchBot.tapCard(const Key('leftCard-134'), duration: 0);
 
-      await cardMatchBot.tapCard(const Key('rightCard-134'));
+      await cardMatchBot.tapCard(const Key('rightCard-134'), duration: 0);
 
       final leftCard = cardMatchBot.widgetState.leftList
           .firstWhere((element) => element.selected == true);
@@ -209,48 +209,101 @@ void main() {
   });
 
   testWidgets(
+      'GIVEN more than 1 matching card WHEN 1 second pass THEN board should change the status of the cards to hidden',
+      (tester) async {
+    final cardMatchBot = CardMatchBot(tester);
+
+    await cardMatchBot.showBoard();
+
+    await cardMatchBot.startGame();
+
+    await cardMatchBot.tapCard(const Key('leftCard-134'));
+
+    await cardMatchBot.tapCard(const Key('rightCard-134'));
+
+    // delay for 1 second
+    await tester.pump(const Duration(seconds: 1));
+
+    // Acccess the cards and check if they are hidden
+    final leftCard = cardMatchBot.widgetState.leftList
+        .firstWhere((element) => element.id == 134);
+    final rightCard = cardMatchBot.widgetState.rightList
+        .firstWhere((element) => element.id == 134);
+
+    expect(leftCard.status, MatchStatus.hidden);
+    expect(rightCard.status, MatchStatus.hidden);
+  });
+
+  testWidgets(
+      'GIVEN more than 1 matching card WHEN 2 seconds pass THEN the board should replace hidden cards for new visible ones',
+      (tester) async {
+    final cardMatchBot = CardMatchBot(tester);
+
+    await cardMatchBot.showBoard();
+
+    await cardMatchBot.startGame();
+
+    await cardMatchBot.tapCard(const Key('leftCard-134'));
+
+    await cardMatchBot.tapCard(const Key('rightCard-134'));
+
+    await cardMatchBot.tapCard(const Key('leftCard-823'));
+
+    await cardMatchBot.tapCard(const Key('rightCard-823'));
+
+    // delay 2 seconds
+    await tester.pump(const Duration(seconds: 2));
+
+    // Acccess the cards and check if the cards are replaced for visible status
+    for (var element in cardMatchBot.widgetState.leftList) {
+      expect(element.status, MatchStatus.visible);
+    }
+
+    for (var element in cardMatchBot.widgetState.rightList) {
+      expect(element.status, MatchStatus.visible);
+    }
+  });
+
+  testWidgets(
       'When there is a non-cosecutive match 10+pts are added to the score',
       (tester) async {
-    await tester.runAsync(() async {
-      final cardMatchBot = CardMatchBot(tester);
+    final cardMatchBot = CardMatchBot(tester);
 
-      await cardMatchBot.showBoard();
+    await cardMatchBot.showBoard();
 
-      await cardMatchBot.startGame();
+    await cardMatchBot.startGame();
 
-      await cardMatchBot.tapCard(const Key('leftCard-134'));
+    await cardMatchBot.tapCard(const Key('leftCard-134'));
 
-      await cardMatchBot.tapCard(const Key('rightCard-134'));
+    await cardMatchBot.tapCard(const Key('rightCard-134'));
 
-      // Access the state of the widget and verify that the state is updated
-      // first match = 10
-      // second match = 10 + 15 bonus
-      expect(cardMatchBot.widgetState.score, 10);
-    });
+    // Access the state of the widget and verify that the state is updated
+    // first match = 10
+    // second match = 10 + 15 bonus
+    expect(cardMatchBot.widgetState.score, 10);
   });
 
   testWidgets(
       'When there is a consecutive match the score should be +10 and a +15 bonus = 35pts',
       (tester) async {
-    await tester.runAsync(() async {
-      final cardMatchBot = CardMatchBot(tester);
+    final cardMatchBot = CardMatchBot(tester);
 
-      await cardMatchBot.showBoard();
+    await cardMatchBot.showBoard();
 
-      await cardMatchBot.startGame();
+    await cardMatchBot.startGame();
 
-      await cardMatchBot.tapCard(const Key('leftCard-134'));
+    await cardMatchBot.tapCard(const Key('leftCard-134'));
 
-      await cardMatchBot.tapCard(const Key('rightCard-134'));
+    await cardMatchBot.tapCard(const Key('rightCard-134'));
 
-      await cardMatchBot.tapCard(const Key('leftCard-823'));
+    await cardMatchBot.tapCard(const Key('leftCard-823'));
 
-      await cardMatchBot.tapCard(const Key('rightCard-823'));
+    await cardMatchBot.tapCard(const Key('rightCard-823'));
 
-      // Access the state of the widget and verify that the state is updated
-      // first match = 10
-      // second match = 10 + 15 bonus
-      expect(cardMatchBot.widgetState.score, 35);
-    });
+    await tester.pump(const Duration(seconds: 1));
+    // Access the state of the widget and verify that the state is updated
+    // first match = 10
+    // second match = 10 + 15 bonus
+    expect(cardMatchBot.widgetState.score, 35);
   });
 }

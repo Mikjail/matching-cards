@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:of_card_match/domain/matching_card.dart';
@@ -107,7 +108,8 @@ void main() {
     expect(status, MatchStatus.noMatch);
   });
 
-  test('When there is 2 matching cards then the selected car should be removed',
+  test(
+      'GIVEN 2 cards WHEN they match and the board remove the card THEN the board should add the remain missing card in the backup cards',
       () async {
     final leftCard = MatchingCard(
         id: 1,
@@ -121,8 +123,81 @@ void main() {
         status: MatchStatus.visible,
         selected: false,
         imageUrl: '');
+
     matchingCardBoard.removeFromSelectedCards(leftCard, rightCard);
+
+    matchingCardBoard.addBackupCards();
+
+    expect(matchingCardBoard.backUpCards.length, 1);
+  });
+
+  test(
+      'GIVEN 2 cards WHEN they match THEN the board should remove the card from selected cards',
+      () async {
+    final leftCard = MatchingCard(
+        id: 1,
+        name: 'team1',
+        status: MatchStatus.visible,
+        selected: false,
+        imageUrl: '');
+    final rightCard = MatchingCard(
+        id: 2,
+        name: 'player1',
+        status: MatchStatus.visible,
+        selected: false,
+        imageUrl: '');
+
+    matchingCardBoard.removeFromSelectedCards(leftCard, rightCard);
+
     expect(matchingCardBoard.selectedCards.length, 3);
+  });
+
+  test(
+      'GIVEN 2 cards WHEN they are hidden THEN the board should be able to replace them with new visible cards',
+      () async {
+    final cards = [
+      PlayerCard(
+        id: 5,
+        team: 'team5',
+        player: 'player5',
+        imgPlayer: 'imgPlayer5',
+        imgTeam: 'imgTeam1',
+      ),
+      PlayerCard(
+        id: 6,
+        team: 'team6',
+        player: 'player6',
+        imgPlayer: 'imgPlayer6',
+        imgTeam: 'imgTeam6',
+      )
+    ];
+
+    final leftCard = MatchingCard(
+        id: 1,
+        name: 'team1',
+        status: MatchStatus.hidden,
+        selected: false,
+        imageUrl: '');
+    final rightCard = MatchingCard(
+        id: 2,
+        name: 'player1',
+        status: MatchStatus.hidden,
+        selected: false,
+        imageUrl: '');
+
+    final mockData = [...players, ...cards];
+
+    final matchingCardBoard = MatchingCardBoard(cardDeck: mockData);
+
+    matchingCardBoard.removeFromSelectedCards(leftCard, rightCard);
+
+    matchingCardBoard.addBackupCards();
+
+    final newCards =
+        matchingCardBoard.replaceHiddenCards([leftCard, rightCard]);
+
+    expect(newCards.first.status, MatchStatus.visible);
+    expect(newCards.last.status, MatchStatus.visible);
   });
 
   test(
@@ -147,5 +222,42 @@ void main() {
     matchingCardBoard.setMatchPoints(isMatch); // 10points
     matchingCardBoard.setMatchPoints(isMatch); // 10points + 15points
     expect(matchingCardBoard.calculateScore(), 25);
+  });
+
+  test(
+      'GIVEN 4 Matching cards WHEN there are hidden cards THEN it should be able to replace them with new visible cards',
+      () {
+    //create a new Matching card board with 2 extra cards.
+    final cards = [
+      PlayerCard(
+        id: 5,
+        team: 'team5',
+        player: 'player5',
+        imgPlayer: 'imgPlayer5',
+        imgTeam: 'imgTeam1',
+      ),
+      PlayerCard(
+        id: 6,
+        team: 'team6',
+        player: 'player6',
+        imgPlayer: 'imgPlayer6',
+        imgTeam: 'imgTeam6',
+      )
+    ];
+    final mockData = [...players, ...cards];
+    final matchingCardBoard = MatchingCardBoard(cardDeck: mockData);
+
+    // pass 4 cards to the board
+    matchingCardBoard.startGame(4);
+
+    // all cards should be hidden
+    final cardsLeft = matchingCardBoard.getShuffledCardsBasedOnTeams();
+    final cardsRight = matchingCardBoard.getShuffledCardsBasedOnTeams();
+
+    final newCards =
+        matchingCardBoard.replaceHiddenCards([...cardsLeft, ...cardsRight]);
+
+    // all cards should be visible now
+    expect(newCards.every((card) => card.status == MatchStatus.visible), true);
   });
 }

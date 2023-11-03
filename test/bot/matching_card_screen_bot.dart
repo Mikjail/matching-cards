@@ -8,7 +8,7 @@ class CardMatchBot {
 
   CardMatchBot(this._tester);
 
-  get widgetState => _myWidgetState;
+  MatchingCardsState get widgetState => _myWidgetState;
 
   Future<void> showBoard() async {
     await adjustSize();
@@ -26,14 +26,14 @@ class CardMatchBot {
     await _tester.pumpAndSettle(const Duration(seconds: 1));
   }
 
-  Future<void> tapCard(Key key) async {
+  Future<void> tapCard(Key key, {duration = 1000}) async {
     await _tester.tap(find.byKey(key));
-    await _tester.pump();
+    await _tester.pump(Duration(milliseconds: duration));
   }
 
   Future<void> getGrid(String text) async {
     await _tester.tap(find.text(text));
-    await _tester.pump();
+    await _tester.pump(const Duration(seconds: 1));
   }
 }
 

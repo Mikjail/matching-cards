@@ -12,7 +12,7 @@ class PlayersRepository implements IPlayersRepository {
   Future<List<PlayerCard>> getTopPlayersFromCompetition(
       String competitionId) async {
     final response = await client.get(Uri.parse(
-        'https://scores-api.onefootball.com/v1/en/competitions/$competitionId/players/top?size=50'));
+        'https://scores-api.onefootball.com/v1/en/competitions/$competitionId/players/top?size=100'));
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);

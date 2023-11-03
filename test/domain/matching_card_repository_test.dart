@@ -21,7 +21,7 @@ void main() {
       final jsonString = await file.readAsString();
 
       when(client.get(Uri.parse(
-              'https://scores-api.onefootball.com/v1/en/competitions/12/players/top?size=50')))
+              'https://scores-api.onefootball.com/v1/en/competitions/12/players/top?size=100')))
           .thenAnswer((_) async => http.Response(jsonString, 200, headers: {
                 HttpHeaders.contentTypeHeader:
                     'application/json; charset=utf-8',

@@ -8,8 +8,12 @@ class MatchingCardBoard {
   final List<PlayerCard> cardDeck;
   int _numberOfMatches = 0;
   int _numberOfConsecutiveMatch = 0;
+  int numberOfMatchesAfterRefill = 0;
   List<PlayerCard> _selectedCards = [];
+  final List<PlayerCard> _backUpCards = [];
+  bool isRefilling = false;
 
+  get backUpCards => _backUpCards;
   get numberOfMatches => _numberOfMatches;
   get selectedCards => _selectedCards;
   get numberOfConsecutiveMatch => _numberOfConsecutiveMatch;
@@ -25,7 +29,67 @@ class MatchingCardBoard {
     _selectedCards = cardDeck.take(count).toList();
   }
 
-  void refillCard() {
+  void addBackupCards() {
+    _shuffleCards();
+    final numberOfCards = 4 - _selectedCards.length;
+    final fromDeck = cardDeck.take(numberOfCards).toList();
+    _backUpCards.addAll(fromDeck);
+    _selectedCards.addAll(fromDeck);
+  }
+
+  List<MatchingCard> replaceHiddenCards(List<MatchingCard> cards) {
+    final hiddenCards =
+        cards.where((card) => card.status == MatchStatus.hidden).toList();
+    var playerCards = backUpCardBasedOnPlayers();
+    var teamCards = backUpCardBasedOnTeams();
+    for (var card in hiddenCards) {
+      final index = cards.indexOf(card);
+      // get one card from the deck
+      cards[index] = card.isPlayer == true
+          ? playerCards.removeLast()
+          : teamCards.removeLast();
+    }
+    return cards;
+  }
+
+  void clearBackupCards() {
+    _backUpCards.clear();
+  }
+
+  List<MatchingCard> backUpCardBasedOnPlayers() {
+    final cards = _backUpCards
+        .map(
+          (backUpCard) => MatchingCard(
+              id: backUpCard.id,
+              name: backUpCard.player,
+              status: MatchStatus.visible,
+              selected: false,
+              imageUrl: backUpCard.imgPlayer,
+              isPlayer: true),
+        )
+        .toList();
+    cards.shuffle();
+    return cards;
+  }
+
+  List<MatchingCard> backUpCardBasedOnTeams() {
+    final cards = _backUpCards
+        .map(
+          (backUpCard) => MatchingCard(
+              id: backUpCard.id,
+              name: backUpCard.team,
+              status: MatchStatus.visible,
+              selected: false,
+              imageUrl: backUpCard.imgTeam,
+              isPlayer: false),
+        )
+        .toList();
+    cards.shuffle();
+    return cards;
+  }
+
+  void refillOneCard() {
+    _shuffleCards();
     _selectedCards.add(cardDeck.first);
   }
 

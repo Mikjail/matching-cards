@@ -32,6 +32,7 @@ class MatchingCardsState extends State<MatchingCards> {
   final playersRepository = locator.get<PlayersRepository>();
   final _controller = CountDownController();
   late MatchingCardBoard matchingCardBoard;
+  bool isRefilling = false;
   bool gameStarted = false;
   int score = 0;
   int numberOfMatches = 0;
@@ -41,6 +42,7 @@ class MatchingCardsState extends State<MatchingCards> {
   int? rightHeldDown;
   List<MatchingCard> leftList = [];
   List<MatchingCard> rightList = [];
+  int matchesAfterRefill = 0;
 
   get controller => _controller;
 
@@ -108,6 +110,7 @@ class MatchingCardsState extends State<MatchingCards> {
         updateScore();
         matchingCardBoard.removeFromSelectedCards(
             leftList[prevLeftSelection!], rightList[prevRightSelection!]);
+        matchingCardBoard.numberOfMatchesAfterRefill += 1;
       }
       setState(() {
         leftList[prevLeftSelection!].status = status;
@@ -124,7 +127,8 @@ class MatchingCardsState extends State<MatchingCards> {
       prevLeftSelection = null;
       prevRightSelection = null;
     });
-    return Future.delayed(Duration(milliseconds: duration), () {
+
+    await Future.delayed(Duration(milliseconds: duration), () {
       setState(() {
         leftList[leftIndex].selected = false;
         rightList[rightIndex].selected = false;
@@ -136,9 +140,20 @@ class MatchingCardsState extends State<MatchingCards> {
           rightList[rightIndex].status = MatchStatus.hidden;
         }
       });
-      if (isMatch && matchingCardBoard.numberOfMatches % 4 == 0) {
-        fillCards();
-      }
+    });
+    if (!matchingCardBoard.isRefilling &&
+        matchingCardBoard.numberOfMatchesAfterRefill > 1) {
+      refillCards();
+    }
+  }
+
+  void refillCards() async {
+    matchingCardBoard.clearBackupCards();
+    matchingCardBoard.addBackupCards();
+    matchingCardBoard.numberOfMatchesAfterRefill = 0;
+    setState(() {
+      leftList = matchingCardBoard.replaceHiddenCards(leftList);
+      rightList = matchingCardBoard.replaceHiddenCards(rightList);
     });
   }
 
