@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mockito/annotations.dart';
+import 'package:of_card_match/domain/matching_card_board.dart';
 
 import 'package:of_card_match/locator.dart';
 import 'package:of_card_match/ui/matching_cards/custom_card.dart';
@@ -146,9 +147,9 @@ void main() {
 
       await cardMatchBot.startGame();
 
-      await cardMatchBot.tapCard(const Key('leftCard-134'), duration: 0);
+      await cardMatchBot.tapCard(const Key('leftCard-134'));
 
-      await cardMatchBot.tapCard(const Key('rightCard-134'), duration: 0);
+      await cardMatchBot.tapCard(const Key('rightCard-134'));
 
       final leftCard = cardMatchBot.widgetState.leftList
           .firstWhere((element) => element.selected == true);
@@ -243,16 +244,28 @@ void main() {
 
     await cardMatchBot.startGame();
 
-    await cardMatchBot.tapCard(const Key('leftCard-134'));
+    final leftCards = cardMatchBot.widgetState.leftList;
 
-    await cardMatchBot.tapCard(const Key('rightCard-134'));
+    await cardMatchBot.tapCard(Key('leftCard-${leftCards[0].id.toString()}'),
+        duration: 0);
 
-    await cardMatchBot.tapCard(const Key('leftCard-823'));
+    await cardMatchBot.tapCard(Key('rightCard-${leftCards[0].id.toString()}'),
+        duration: 0);
 
-    await cardMatchBot.tapCard(const Key('rightCard-823'));
+    await cardMatchBot.tapCard(Key('leftCard-${leftCards[1].id.toString()}'),
+        duration: 0);
+
+    await cardMatchBot.tapCard(Key('rightCard-${leftCards[1].id.toString()}'),
+        duration: 0);
+
+    await cardMatchBot.tapCard(Key('leftCard-${leftCards[2].id.toString()}'),
+        duration: 0);
+
+    await cardMatchBot.tapCard(Key('rightCard-${leftCards[2].id.toString()}'),
+        duration: 0);
 
     // delay 2 seconds
-    await tester.pump(const Duration(seconds: 2));
+    await tester.pump(const Duration(seconds: 8));
 
     // Acccess the cards and check if the cards are replaced for visible status
     for (var element in cardMatchBot.widgetState.leftList) {

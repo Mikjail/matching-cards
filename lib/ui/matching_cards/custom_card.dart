@@ -6,10 +6,11 @@ class CustomCard extends StatelessWidget {
   final bool selected;
   final String text;
   final String imageUrl;
-  final MatchStatus isMatch;
+  final MatchStatus status;
   final bool isHeldDown;
   final bool disabled;
   final bool fitCover;
+  final bool isFirstRun;
   final void Function() onTap;
   final void Function(TapDownDetails) onTapDown;
   final void Function() onTapCancel;
@@ -17,12 +18,13 @@ class CustomCard extends StatelessWidget {
   const CustomCard({
     Key? key,
     this.isHeldDown = false,
-    this.isMatch = MatchStatus.hidden,
+    this.status = MatchStatus.hidden,
     this.disabled = false,
     this.selected = false,
     this.imageUrl = '',
     this.text = '',
     this.fitCover = false,
+    this.isFirstRun = true,
     required this.onTap,
     required this.onTapDown,
     required this.onTapCancel,
@@ -32,11 +34,11 @@ class CustomCard extends StatelessWidget {
   Widget build(BuildContext context) {
     Color getColor() {
       // There is a match!
-      if (selected && isMatch == MatchStatus.match) {
+      if (selected && status == MatchStatus.match) {
         return CustomTheme.success;
       }
       // There is no match!
-      if (selected && isMatch == MatchStatus.noMatch) {
+      if (selected && status == MatchStatus.noMatch) {
         return CustomTheme.error;
       }
       // The card is selected!
@@ -53,6 +55,8 @@ class CustomCard extends StatelessWidget {
     Color textColor = CustomTheme.white;
 
     final borderDuration = disabled ? 300 : 100;
+
+    final opacityDuration = status == MatchStatus.visible ? 2000 : 300;
 
     return GestureDetector(
       onTap: onTap,
@@ -79,10 +83,10 @@ class CustomCard extends StatelessWidget {
         margin: const EdgeInsets.all(5),
         child: TweenAnimationBuilder<double?>(
             tween: Tween<double>(
-              begin: 0,
+              begin: isFirstRun ? 1 : 0,
               end: disabled ? 0 : 1,
             ),
-            duration: const Duration(milliseconds: 300),
+            duration: Duration(milliseconds: opacityDuration),
             builder: (_, double? opacity, __) {
               return Opacity(
                   opacity: opacity ?? 0,

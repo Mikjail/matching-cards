@@ -42,7 +42,7 @@ void main() {
   const cardsToPlay = 4;
 
   setUp(() {
-    matchingCardBoard = MatchingCardBoard(cardDeck: players);
+    matchingCardBoard = MatchingCardBoard(cardDeck: [...players]);
     matchingCardBoard.startGame(cardsToPlay);
   });
 

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:of_card_match/domain/matching_card.dart';
@@ -43,6 +45,7 @@ class MatchingCardsState extends State<MatchingCards> {
   List<MatchingCard> leftList = [];
   List<MatchingCard> rightList = [];
   int matchesAfterRefill = 0;
+  bool isFirstRun = true;
 
   get controller => _controller;
 
@@ -78,6 +81,7 @@ class MatchingCardsState extends State<MatchingCards> {
   }
 
   void onLeftCardTap(int cardIndex) {
+    isFirstRun = false;
     setState(() {
       if (prevLeftSelection != null) {
         leftList[prevLeftSelection!].selected = false;
@@ -89,6 +93,7 @@ class MatchingCardsState extends State<MatchingCards> {
   }
 
   void onRightCardTap(int cardIndex) {
+    isFirstRun = false;
     setState(() {
       if (prevRightSelection != null) {
         rightList[prevRightSelection!].selected = false;
@@ -141,8 +146,11 @@ class MatchingCardsState extends State<MatchingCards> {
         }
       });
     });
+
+    var number = Random().nextInt(3) + 1;
+
     if (!matchingCardBoard.isRefilling &&
-        matchingCardBoard.numberOfMatchesAfterRefill > 1) {
+        matchingCardBoard.numberOfMatchesAfterRefill > number) {
       refillCards();
     }
   }
@@ -151,9 +159,12 @@ class MatchingCardsState extends State<MatchingCards> {
     matchingCardBoard.clearBackupCards();
     matchingCardBoard.addBackupCards();
     matchingCardBoard.numberOfMatchesAfterRefill = 0;
-    setState(() {
-      leftList = matchingCardBoard.replaceHiddenCards(leftList);
-      rightList = matchingCardBoard.replaceHiddenCards(rightList);
+    // add delay to allow the cards to be removed
+    await Future.delayed(const Duration(milliseconds: 100), () {
+      setState(() {
+        leftList = matchingCardBoard.replaceHiddenCards(leftList);
+        rightList = matchingCardBoard.replaceHiddenCards(rightList);
+      });
     });
   }
 
@@ -219,7 +230,8 @@ class MatchingCardsState extends State<MatchingCards> {
                   itemBuilder: (BuildContext context, int index) {
                     return CustomCard(
                       key: Key('leftCard-${leftList[index].id}'),
-                      isMatch: leftList[index].status,
+                      isFirstRun: isFirstRun,
+                      status: leftList[index].status,
                       selected: leftList[index].selected == true,
                       text: widget.version == 'v1' ? leftList[index].name : '',
                       fitCover: leftList[index].isPlayer == false,
@@ -271,7 +283,8 @@ class MatchingCardsState extends State<MatchingCards> {
                   itemBuilder: (BuildContext context, int index) {
                     return CustomCard(
                       key: Key('rightCard-${rightList[index].id}'),
-                      isMatch: rightList[index].status,
+                      isFirstRun: isFirstRun,
+                      status: rightList[index].status,
                       selected: rightList[index].selected == true,
                       text: widget.version == 'v1' ? rightList[index].name : '',
                       imageUrl: rightList[index].imageUrl,
