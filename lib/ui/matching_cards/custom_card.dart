@@ -1,8 +1,10 @@
+import 'package:flip_card/flip_card.dart';
+import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:of_card_match/theme/colors.dart';
 import 'package:of_card_match/ui/matching_cards/matching_cards.dart';
 
-class CustomCard extends StatelessWidget {
+class CustomCard extends StatefulWidget {
   final bool selected;
   final String text;
   final String imageUrl;
@@ -11,7 +13,8 @@ class CustomCard extends StatelessWidget {
   final bool disabled;
   final bool fitCover;
   final bool isFirstRun;
-  final void Function() onTap;
+
+  final void Function(FlipCardController) onTap;
   final void Function(TapDownDetails) onTapDown;
   final void Function() onTapCancel;
 
@@ -31,43 +34,54 @@ class CustomCard extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<CustomCard> createState() => _CustomCardState();
+}
+
+class _CustomCardState extends State<CustomCard> {
+  final controller = FlipCardController();
+
+  @override
   Widget build(BuildContext context) {
     Color getColor() {
       // There is a match!
-      if (selected && status == MatchStatus.match) {
+      if (widget.selected && widget.status == MatchStatus.match) {
         return CustomTheme.success;
       }
       // There is no match!
-      if (selected && status == MatchStatus.noMatch) {
+      if (widget.selected && widget.status == MatchStatus.noMatch) {
         return CustomTheme.error;
       }
       // The card is selected!
-      if (selected || isHeldDown == true) {
+      if (widget.selected || widget.isHeldDown == true) {
         return CustomTheme.accent;
       }
       // The card is disabled!
-      if (disabled == true) {
+      if (widget.disabled == true) {
         return CustomTheme.grey;
       }
       return CustomTheme.white.withOpacity(0.0);
     }
 
+    onCardTap() {
+      widget.onTap(controller);
+    }
+
     Color textColor = CustomTheme.white;
 
-    final borderDuration = disabled ? 300 : 100;
+    final borderDuration = widget.disabled ? 300 : 100;
 
-    final opacityDuration = status == MatchStatus.visible ? 2000 : 300;
+    final opacityDuration = widget.status == MatchStatus.visible ? 1000 : 300;
 
     return GestureDetector(
-      onTap: onTap,
-      onTapDown: onTapDown,
-      onTapCancel: onTapCancel,
+      onTap: onCardTap,
+      onTapDown: widget.onTapDown,
+      onTapCancel: widget.onTapCancel,
       child: AnimatedContainer(
         alignment: Alignment.center,
         duration: Duration(milliseconds: borderDuration),
         decoration: BoxDecoration(
           color: CustomTheme.darkGray,
-          image: text == ''
+          image: widget.text == ''
               ? const DecorationImage(
                   image: AssetImage('assets/imgs/card_back.png'),
                   fit: BoxFit.none,
@@ -76,22 +90,22 @@ class CustomCard extends StatelessWidget {
               : null,
           border: Border.all(
             color: getColor(),
-            width: selected || isHeldDown == true ? 3.0 : 0,
+            width: widget.selected || widget.isHeldDown == true ? 3.0 : 0,
           ),
           borderRadius: BorderRadius.circular(8.0),
         ),
         margin: const EdgeInsets.all(5),
         child: TweenAnimationBuilder<double?>(
             tween: Tween<double>(
-              begin: isFirstRun ? 1 : 0,
-              end: disabled ? 0 : 1,
+              begin: widget.isFirstRun ? 1 : 0,
+              end: widget.disabled ? 0 : 1,
             ),
             duration: Duration(milliseconds: opacityDuration),
             builder: (_, double? opacity, __) {
               return Opacity(
                   opacity: opacity ?? 0,
-                  child:
-                      buildCard(text, imageUrl, textColor, disabled, fitCover));
+                  child: buildCard(widget.text, widget.imageUrl, textColor,
+                      widget.disabled, widget.fitCover, controller));
             }),
       ),
     );
@@ -99,7 +113,7 @@ class CustomCard extends StatelessWidget {
 }
 
 Widget buildCard(String text, String imageUrl, Color textColor, bool disabled,
-    bool fitCover) {
+    bool fitCover, controller) {
   if (text != '') {
     return Padding(
       padding: const EdgeInsets.all(12.0),
@@ -115,10 +129,17 @@ Widget buildCard(String text, String imageUrl, Color textColor, bool disabled,
     );
   }
 
-  return Stack(children: [
-    buildImage(fitCover, imageUrl),
-    Center(child: Image.asset("assets/imgs/vector.png", width: 64, height: 75)),
-  ]);
+  return FlipCard(
+    flipOnTouch: false,
+    controller: controller,
+    front: Stack(children: [
+      buildImage(fitCover, imageUrl),
+      Center(
+          child: Image.asset("assets/imgs/vector.png", width: 64, height: 75)),
+    ]),
+    back: Center(
+        child: Image.asset("assets/imgs/vector.png", width: 64, height: 75)),
+  );
 }
 
 Widget buildImage(bool fitCover, String imageUrl) {

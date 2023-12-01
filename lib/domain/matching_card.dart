@@ -1,3 +1,4 @@
+import 'package:flip_card/flip_card_controller.dart';
 import 'package:of_card_match/ui/matching_cards/matching_cards.dart';
 
 class MatchingCard {
@@ -7,6 +8,7 @@ class MatchingCard {
   bool selected;
   String imageUrl;
   bool isPlayer;
+  FlipCardController? controller;
 
   MatchingCard(
       {required this.id,

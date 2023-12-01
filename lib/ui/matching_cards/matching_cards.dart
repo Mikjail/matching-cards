@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
+import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:of_card_match/domain/matching_card.dart';
 
@@ -80,25 +81,27 @@ class MatchingCardsState extends State<MatchingCards> {
     });
   }
 
-  void onLeftCardTap(int cardIndex) {
+  void onLeftCardTap(int cardIndex, FlipCardController controller) {
     isFirstRun = false;
     setState(() {
       if (prevLeftSelection != null) {
         leftList[prevLeftSelection!].selected = false;
       }
       prevLeftSelection = cardIndex;
+      leftList[cardIndex].controller = controller;
       leftList[cardIndex].selected = true;
     });
     checkMatch();
   }
 
-  void onRightCardTap(int cardIndex) {
+  void onRightCardTap(int cardIndex, FlipCardController controller) {
     isFirstRun = false;
     setState(() {
       if (prevRightSelection != null) {
         rightList[prevRightSelection!].selected = false;
       }
       prevRightSelection = cardIndex;
+      rightList[cardIndex].controller = controller;
       rightList[cardIndex].selected = true;
     });
     checkMatch();
@@ -112,6 +115,8 @@ class MatchingCardsState extends State<MatchingCards> {
       final isMatch = status == MatchStatus.match;
       matchingCardBoard.setMatchPoints(isMatch);
       if (isMatch) {
+        leftList[prevLeftSelection!].controller!.toggleCard();
+        rightList[prevRightSelection!].controller!.toggleCard();
         updateScore();
         matchingCardBoard.removeFromSelectedCards(
             leftList[prevLeftSelection!], rightList[prevRightSelection!]);
@@ -147,7 +152,7 @@ class MatchingCardsState extends State<MatchingCards> {
       });
     });
 
-    var number = Random().nextInt(3) + 1;
+    var number = Random().nextInt(2) + 1;
 
     if (!matchingCardBoard.isRefilling &&
         matchingCardBoard.numberOfMatchesAfterRefill > number) {
@@ -239,12 +244,12 @@ class MatchingCardsState extends State<MatchingCards> {
                       isHeldDown: index == leftHeldDown,
                       disabled: leftList[index].status == MatchStatus.hidden ||
                           !gameStarted,
-                      onTap: () {
+                      onTap: (controller) {
                         leftHeldDown = null;
                         if (!isLeftCardVisisble(index)) {
                           return;
                         }
-                        onLeftCardTap(index);
+                        onLeftCardTap(index, controller);
                       },
                       onTapDown: (_) {
                         if (!isLeftCardVisisble(index)) {
@@ -291,12 +296,12 @@ class MatchingCardsState extends State<MatchingCards> {
                       isHeldDown: rightHeldDown == index,
                       disabled: rightList[index].status == MatchStatus.hidden ||
                           !gameStarted,
-                      onTap: () {
+                      onTap: (controller) {
                         rightHeldDown = null;
                         if (!isRightCardVisible(index)) {
                           return;
                         }
-                        onRightCardTap(index);
+                        onRightCardTap(index, controller);
                       },
                       onTapDown: (_) {
                         if (!isRightCardVisible(index)) {

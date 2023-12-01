@@ -140,8 +140,12 @@ class MatchingCardBoard {
   }
 
   void removeFromSelectedCards(MatchingCard leftCard, MatchingCard rightCard) {
-    _selectedCards.removeWhere((player) =>
+    int index = _selectedCards.indexWhere((player) =>
         leftCard.name == player.team && rightCard.name == player.player);
+
+    if (index != -1) {
+      _selectedCards.removeAt(index);
+    }
   }
 
   void setMatchPoints(bool isMatch) {
