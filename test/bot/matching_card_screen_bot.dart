@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:of_card_match/ui/matching_cards/custom_card.dart';
 import 'package:of_card_match/ui/matching_cards/matching_cards.dart';
 
 class CardMatchBot {
@@ -26,8 +27,9 @@ class CardMatchBot {
     await _tester.pumpAndSettle(const Duration(seconds: 1));
   }
 
-  Future<void> tapCard(Key key, {duration = 1000}) async {
-    await _tester.tap(find.byKey(key));
+  Future<void> tapCard(String key, {duration = 1000}) async {
+    await _tester.tap(find.byWidgetPredicate(
+        (widget) => widget is CustomCard && widget.testKey == key));
     await _tester.pump(Duration(milliseconds: duration));
   }
 

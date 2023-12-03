@@ -1,10 +1,13 @@
-import 'package:flip_card/flip_card.dart';
-import 'package:flip_card/flip_card_controller.dart';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:of_card_match/theme/colors.dart';
 import 'package:of_card_match/ui/matching_cards/matching_cards.dart';
 
+import 'flip_card.dart';
+
 class CustomCard extends StatefulWidget {
+  final String testKey;
   final bool selected;
   final String text;
   final String imageUrl;
@@ -14,20 +17,21 @@ class CustomCard extends StatefulWidget {
   final bool fitCover;
   final bool isFirstRun;
 
-  final void Function(FlipCardController) onTap;
+  final void Function() onTap;
   final void Function(TapDownDetails) onTapDown;
   final void Function() onTapCancel;
 
   const CustomCard({
     Key? key,
     this.isHeldDown = false,
-    this.status = MatchStatus.hidden,
     this.disabled = false,
     this.selected = false,
     this.imageUrl = '',
     this.text = '',
     this.fitCover = false,
     this.isFirstRun = true,
+    required this.testKey,
+    required this.status,
     required this.onTap,
     required this.onTapDown,
     required this.onTapCancel,
@@ -37,8 +41,23 @@ class CustomCard extends StatefulWidget {
   State<CustomCard> createState() => _CustomCardState();
 }
 
-class _CustomCardState extends State<CustomCard> {
-  final controller = FlipCardController();
+class _CustomCardState extends State<CustomCard>
+    with SingleTickerProviderStateMixin {
+  late ValueNotifier<MatchStatus> _status;
+
+  @override
+  void initState() {
+    super.initState();
+    _status = ValueNotifier<MatchStatus>(widget.status);
+  }
+
+  @override
+  void didUpdateWidget(CustomCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.status != oldWidget.status) {
+      _status.value = widget.status;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,18 +81,16 @@ class _CustomCardState extends State<CustomCard> {
       return CustomTheme.white.withOpacity(0.0);
     }
 
-    onCardTap() {
-      widget.onTap(controller);
-    }
-
     Color textColor = CustomTheme.white;
 
     final borderDuration = widget.disabled ? 300 : 100;
 
-    final opacityDuration = widget.status == MatchStatus.visible ? 1000 : 300;
+    void onTap() {
+      widget.onTap();
+    }
 
     return GestureDetector(
-      onTap: onCardTap,
+      onTap: onTap,
       onTapDown: widget.onTapDown,
       onTapCancel: widget.onTapCancel,
       child: AnimatedContainer(
@@ -81,13 +98,7 @@ class _CustomCardState extends State<CustomCard> {
         duration: Duration(milliseconds: borderDuration),
         decoration: BoxDecoration(
           color: CustomTheme.darkGray,
-          image: widget.text == ''
-              ? const DecorationImage(
-                  image: AssetImage('assets/imgs/card_back.png'),
-                  fit: BoxFit.none,
-                  scale: 4,
-                )
-              : null,
+          image: null,
           border: Border.all(
             color: getColor(),
             width: widget.selected || widget.isHeldDown == true ? 3.0 : 0,
@@ -95,25 +106,38 @@ class _CustomCardState extends State<CustomCard> {
           borderRadius: BorderRadius.circular(8.0),
         ),
         margin: const EdgeInsets.all(5),
-        child: TweenAnimationBuilder<double?>(
-            tween: Tween<double>(
-              begin: widget.isFirstRun ? 1 : 0,
-              end: widget.disabled ? 0 : 1,
-            ),
-            duration: Duration(milliseconds: opacityDuration),
-            builder: (_, double? opacity, __) {
-              return Opacity(
-                  opacity: opacity ?? 0,
-                  child: buildCard(widget.text, widget.imageUrl, textColor,
-                      widget.disabled, widget.fitCover, controller));
-            }),
+        child: widget.text != ''
+            ? Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(
+                  widget.text,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 16,
+                  ),
+                ),
+              )
+            : FlipCard(
+                front: Stack(children: [
+                  buildImage(widget.fitCover, widget.imageUrl),
+                  Center(
+                      child: Image.asset("assets/imgs/vector.png",
+                          width: 64, height: 75)),
+                ]),
+                back: Center(
+                    child: Image.asset("assets/imgs/card_back.png",
+                        width: 64, height: 75)),
+                status: _status,
+              ),
       ),
     );
   }
 }
 
-Widget buildCard(String text, String imageUrl, Color textColor, bool disabled,
-    bool fitCover, controller) {
+Widget buildCard(String text, String imageUrl, Color textColor, bool fitCover,
+    AnimationController controller, ValueNotifier<MatchStatus> status) {
   if (text != '') {
     return Padding(
       padding: const EdgeInsets.all(12.0),
@@ -128,17 +152,23 @@ Widget buildCard(String text, String imageUrl, Color textColor, bool disabled,
       ),
     );
   }
-
-  return FlipCard(
-    flipOnTouch: false,
-    controller: controller,
-    front: Stack(children: [
-      buildImage(fitCover, imageUrl),
-      Center(
-          child: Image.asset("assets/imgs/vector.png", width: 64, height: 75)),
-    ]),
-    back: Center(
-        child: Image.asset("assets/imgs/vector.png", width: 64, height: 75)),
+  return Transform(
+    alignment: Alignment.center,
+    transform: Matrix4.identity()
+      ..setEntry(3, 2, 0.001) // perspective
+      ..rotateY(pi * controller.value), // Flip
+    child: GestureDetector(
+      child: controller.value < 0.5
+          ? Center(
+              child: Image.asset("assets/imgs/card_back.png",
+                  width: 64, height: 75))
+          : Stack(children: [
+              buildImage(fitCover, imageUrl),
+              Center(
+                  child: Image.asset("assets/imgs/vector.png",
+                      width: 64, height: 75)),
+            ]),
+    ),
   );
 }
 

@@ -147,9 +147,9 @@ void main() {
 
       await cardMatchBot.startGame();
 
-      await cardMatchBot.tapCard(const Key('leftCard-134'));
+      await cardMatchBot.tapCard('leftCard-134');
 
-      await cardMatchBot.tapCard(const Key('rightCard-134'));
+      await cardMatchBot.tapCard('rightCard-134');
 
       final leftCard = cardMatchBot.widgetState.leftList
           .firstWhere((element) => element.selected == true);
@@ -171,9 +171,9 @@ void main() {
 
       await cardMatchBot.startGame();
 
-      await cardMatchBot.tapCard(const Key('leftCard-134'));
+      await cardMatchBot.tapCard('leftCard-134');
 
-      await cardMatchBot.tapCard(const Key('rightCard-134'));
+      await cardMatchBot.tapCard('rightCard-134');
 
       final leftCard = cardMatchBot.widgetState.leftList
           .firstWhere((element) => element.selected == true);
@@ -195,9 +195,9 @@ void main() {
 
       await cardMatchBot.startGame();
 
-      await cardMatchBot.tapCard(const Key('leftCard-134'));
+      await cardMatchBot.tapCard('leftCard-134');
 
-      await cardMatchBot.tapCard(const Key('rightCard-823'));
+      await cardMatchBot.tapCard('rightCard-823');
 
       final leftCard = cardMatchBot.widgetState.leftList
           .firstWhere((element) => element.selected == true);
@@ -218,9 +218,10 @@ void main() {
 
     await cardMatchBot.startGame();
 
-    await cardMatchBot.tapCard(const Key('leftCard-134'));
+    // find by name
+    await cardMatchBot.tapCard('leftCard-134');
 
-    await cardMatchBot.tapCard(const Key('rightCard-134'));
+    await cardMatchBot.tapCard('rightCard-134');
 
     // delay for 1 second
     await tester.pump(const Duration(seconds: 1));
@@ -246,22 +247,22 @@ void main() {
 
     final leftCards = cardMatchBot.widgetState.leftList;
 
-    await cardMatchBot.tapCard(Key('leftCard-${leftCards[0].id.toString()}'),
+    await cardMatchBot.tapCard('leftCard-${leftCards[0].id.toString()}',
         duration: 0);
 
-    await cardMatchBot.tapCard(Key('rightCard-${leftCards[0].id.toString()}'),
+    await cardMatchBot.tapCard('rightCard-${leftCards[0].id.toString()}',
         duration: 0);
 
-    await cardMatchBot.tapCard(Key('leftCard-${leftCards[1].id.toString()}'),
+    await cardMatchBot.tapCard('leftCard-${leftCards[1].id.toString()}',
         duration: 0);
 
-    await cardMatchBot.tapCard(Key('rightCard-${leftCards[1].id.toString()}'),
+    await cardMatchBot.tapCard('rightCard-${leftCards[1].id.toString()}',
         duration: 0);
 
-    await cardMatchBot.tapCard(Key('leftCard-${leftCards[2].id.toString()}'),
+    await cardMatchBot.tapCard('leftCard-${leftCards[2].id.toString()}',
         duration: 0);
 
-    await cardMatchBot.tapCard(Key('rightCard-${leftCards[2].id.toString()}'),
+    await cardMatchBot.tapCard('rightCard-${leftCards[2].id.toString()}',
         duration: 0);
 
     // delay 2 seconds
@@ -286,9 +287,9 @@ void main() {
 
     await cardMatchBot.startGame();
 
-    await cardMatchBot.tapCard(const Key('leftCard-134'));
+    await cardMatchBot.tapCard('leftCard-134');
 
-    await cardMatchBot.tapCard(const Key('rightCard-134'));
+    await cardMatchBot.tapCard('rightCard-134');
 
     // Access the state of the widget and verify that the state is updated
     // first match = 10
@@ -305,13 +306,13 @@ void main() {
 
     await cardMatchBot.startGame();
 
-    await cardMatchBot.tapCard(const Key('leftCard-134'));
+    await cardMatchBot.tapCard('leftCard-134');
 
-    await cardMatchBot.tapCard(const Key('rightCard-134'));
+    await cardMatchBot.tapCard('rightCard-134');
 
-    await cardMatchBot.tapCard(const Key('leftCard-823'));
+    await cardMatchBot.tapCard('leftCard-823');
 
-    await cardMatchBot.tapCard(const Key('rightCard-823'));
+    await cardMatchBot.tapCard('rightCard-823');
 
     await tester.pump(const Duration(seconds: 1));
     // Access the state of the widget and verify that the state is updated

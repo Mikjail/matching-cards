@@ -81,27 +81,25 @@ class MatchingCardsState extends State<MatchingCards> {
     });
   }
 
-  void onLeftCardTap(int cardIndex, FlipCardController controller) {
+  void onLeftCardTap(int cardIndex) {
     isFirstRun = false;
     setState(() {
       if (prevLeftSelection != null) {
         leftList[prevLeftSelection!].selected = false;
       }
       prevLeftSelection = cardIndex;
-      leftList[cardIndex].controller = controller;
       leftList[cardIndex].selected = true;
     });
     checkMatch();
   }
 
-  void onRightCardTap(int cardIndex, FlipCardController controller) {
+  void onRightCardTap(int cardIndex) {
     isFirstRun = false;
     setState(() {
       if (prevRightSelection != null) {
         rightList[prevRightSelection!].selected = false;
       }
       prevRightSelection = cardIndex;
-      rightList[cardIndex].controller = controller;
       rightList[cardIndex].selected = true;
     });
     checkMatch();
@@ -115,8 +113,6 @@ class MatchingCardsState extends State<MatchingCards> {
       final isMatch = status == MatchStatus.match;
       matchingCardBoard.setMatchPoints(isMatch);
       if (isMatch) {
-        leftList[prevLeftSelection!].controller!.toggleCard();
-        rightList[prevRightSelection!].controller!.toggleCard();
         updateScore();
         matchingCardBoard.removeFromSelectedCards(
             leftList[prevLeftSelection!], rightList[prevRightSelection!]);
@@ -126,11 +122,11 @@ class MatchingCardsState extends State<MatchingCards> {
         leftList[prevLeftSelection!].status = status;
         rightList[prevRightSelection!].status = status;
       });
-      resetBoard(prevLeftSelection, prevRightSelection, isMatch);
+      resetBoard(prevLeftSelection!, prevRightSelection!, isMatch);
     }
   }
 
-  Future<void> resetBoard(leftIndex, rightIndex, isMatch) async {
+  Future<void> resetBoard(int leftIndex, int rightIndex, bool isMatch) async {
     final int duration =
         leftList[leftIndex].status == MatchStatus.match ? 500 : 300;
     setState(() {
@@ -234,7 +230,8 @@ class MatchingCardsState extends State<MatchingCards> {
                   physics: const NeverScrollableScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
                     return CustomCard(
-                      key: Key('leftCard-${leftList[index].id}'),
+                      testKey: 'leftCard-${leftList[index].id}',
+                      key: Key('leftCard-$index'),
                       isFirstRun: isFirstRun,
                       status: leftList[index].status,
                       selected: leftList[index].selected == true,
@@ -244,12 +241,12 @@ class MatchingCardsState extends State<MatchingCards> {
                       isHeldDown: index == leftHeldDown,
                       disabled: leftList[index].status == MatchStatus.hidden ||
                           !gameStarted,
-                      onTap: (controller) {
+                      onTap: () {
                         leftHeldDown = null;
                         if (!isLeftCardVisisble(index)) {
                           return;
                         }
-                        onLeftCardTap(index, controller);
+                        onLeftCardTap(index);
                       },
                       onTapDown: (_) {
                         if (!isLeftCardVisisble(index)) {
@@ -287,7 +284,8 @@ class MatchingCardsState extends State<MatchingCards> {
                   physics: const NeverScrollableScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
                     return CustomCard(
-                      key: Key('rightCard-${rightList[index].id}'),
+                      testKey: 'rightCard-${rightList[index].id}',
+                      key: Key('rightCard-$index'),
                       isFirstRun: isFirstRun,
                       status: rightList[index].status,
                       selected: rightList[index].selected == true,
@@ -296,12 +294,12 @@ class MatchingCardsState extends State<MatchingCards> {
                       isHeldDown: rightHeldDown == index,
                       disabled: rightList[index].status == MatchStatus.hidden ||
                           !gameStarted,
-                      onTap: (controller) {
+                      onTap: () {
                         rightHeldDown = null;
                         if (!isRightCardVisible(index)) {
                           return;
                         }
-                        onRightCardTap(index, controller);
+                        onRightCardTap(index);
                       },
                       onTapDown: (_) {
                         if (!isRightCardVisible(index)) {
