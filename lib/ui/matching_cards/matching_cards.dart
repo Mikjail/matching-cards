@@ -1,8 +1,9 @@
 import 'dart:math';
 
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
-import 'package:flip_card/flip_card_controller.dart';
+
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:of_card_match/domain/matching_card.dart';
 
 import 'package:of_card_match/domain/players_repository.dart';
@@ -177,16 +178,7 @@ class MatchingCardsState extends State<MatchingCards> {
   }
 
   void onCountdownFinished() {
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        transitionDuration: const Duration(seconds: 0),
-        pageBuilder: (context, animation, secondaryAnimation) => FinalScore(
-          score: score,
-          totalMatches: numberOfMatches,
-        ),
-      ),
-    );
+    GoRouter.of(context).go('/finalScore/$score/$numberOfMatches');
   }
 
   Color getColor(selected) {

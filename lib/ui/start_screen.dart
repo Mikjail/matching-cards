@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:of_card_match/theme/colors.dart';
 import 'package:of_card_match/ui/matching_cards/matching_cards.dart';
 
@@ -90,15 +91,7 @@ class _StartScreenState extends State<StartScreen> {
                           CustomTheme.white, // Change this to the desired color
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MatchingCards(
-                            competitionId: '12',
-                            version: 'v2',
-                          ),
-                        ),
-                      );
+                      GoRouter.of(context).go('/matchingCards/12/v2');
                     },
                     child: Text(
                       'Play',

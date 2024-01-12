@@ -35,6 +35,7 @@ dependencies:
   circular_countdown_timer: ^0.2.3
   flip_card: ^0.7.0
   http: ^1.1.0
+  go_router: ^13.0.1
 
 dev_dependencies:
   flutter_test:

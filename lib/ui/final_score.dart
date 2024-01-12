@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:of_card_match/theme/colors.dart';
 import 'package:of_card_match/ui/start_screen.dart';
 
@@ -68,12 +69,7 @@ class FinalScore extends StatelessWidget {
                             .white, // Change this to the desired color
                       ),
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => StartScreen(),
-                          ),
-                        );
+                        GoRouter.of(context).go('/');
                       },
                       child: Text(
                         'PLAY AGAIN',

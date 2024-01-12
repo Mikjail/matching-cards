@@ -1,5 +1,6 @@
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:of_card_match/theme/colors.dart';
 import 'package:of_card_match/ui/start_screen.dart';
 
@@ -30,8 +31,7 @@ class MatchAppBar extends StatelessWidget {
               child: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => StartScreen()));
+                  GoRouter.of(context).go('/');
                 },
                 color: CustomTheme.white,
               ),
