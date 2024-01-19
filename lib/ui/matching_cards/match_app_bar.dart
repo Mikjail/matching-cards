@@ -2,7 +2,6 @@ import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:of_card_match/theme/colors.dart';
-import 'package:of_card_match/ui/start_screen.dart';
 
 class MatchAppBar extends StatelessWidget {
   final void Function() onCountdownFinished;
@@ -20,52 +19,48 @@ class MatchAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                GoRouter.of(context).go('/');
+              },
+              color: CustomTheme.white,
+            ),
+          ),
+        ),
+        countDown(contdownDuration, _controller, onCountdownFinished, context),
+        Row(children: [
+          Image.asset(
+            'assets/imgs/score.png',
+            fit: BoxFit.contain,
+            width: 50,
+          ),
           SizedBox(
-            width: 140,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  GoRouter.of(context).go('/');
-                },
-                color: CustomTheme.white,
+            width: 90,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: CustomTheme.scoreBackground,
+                borderRadius: BorderRadius.circular(2),
+              ),
+              child: Text(
+                score.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: CustomTheme.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
-          countDown(
-              contdownDuration, _controller, onCountdownFinished, context),
-          Row(children: [
-            Image.asset(
-              'assets/imgs/score.png',
-              fit: BoxFit.contain,
-              width: 40,
-            ),
-            SizedBox(
-              width: 95,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: CustomTheme.scoreBackground,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-                child: Text(
-                  score.toString(),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: CustomTheme.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ]),
-        ],
-      ),
+        ]),
+      ],
     );
   }
 }
@@ -77,8 +72,8 @@ Widget countDown(
   BuildContext context,
 ) {
   return SizedBox(
-    width: 60.0,
-    height: 60.0,
+    width: 80.0,
+    height: 80.0,
     child: CircularCountDownTimer(
       duration: contdownDuration,
       initialDuration: 0,

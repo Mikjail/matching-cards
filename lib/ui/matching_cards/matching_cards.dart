@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:of_card_match/domain/matching_card.dart';
 
 import 'package:of_card_match/domain/players_repository.dart';
-import 'package:of_card_match/ui/final_score.dart';
+
 import 'package:of_card_match/ui/matching_cards/custom_card.dart';
 import 'package:of_card_match/domain/matching_card_board.dart';
 
@@ -195,127 +195,144 @@ class MatchingCardsState extends State<MatchingCards> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          MatchAppBar(
-              controller: _controller,
-              score: score,
-              onCountdownFinished: onCountdownFinished),
-          const SizedBox(
-            height: 25,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: GridView.builder(
-                  key: const Key('leftGrid'),
-                  shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    childAspectRatio: 1.5,
-                    mainAxisSpacing: 8,
-                  ),
-                  itemCount: leftList.length,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (BuildContext context, int index) {
-                    return CustomCard(
-                      testKey: 'leftCard-${leftList[index].id}',
-                      key: Key('leftCard-$index'),
-                      isFirstRun: isFirstRun,
-                      status: leftList[index].status,
-                      selected: leftList[index].selected == true,
-                      text: widget.version == 'v1' ? leftList[index].name : '',
-                      fitCover: leftList[index].isPlayer == false,
-                      imageUrl: leftList[index].imageUrl,
-                      isHeldDown: index == leftHeldDown,
-                      disabled: leftList[index].status == MatchStatus.hidden ||
-                          !gameStarted,
-                      onTap: () {
-                        leftHeldDown = null;
-                        if (!isLeftCardVisisble(index)) {
-                          return;
-                        }
-                        onLeftCardTap(index);
-                      },
-                      onTapDown: (_) {
-                        if (!isLeftCardVisisble(index)) {
-                          return;
-                        }
-                        setState(() {
-                          leftHeldDown = index;
-                        });
-                      },
-                      onTapCancel: () {
-                        if (!isLeftCardVisisble(index)) {
-                          return;
-                        }
-                        setState(() {
-                          leftHeldDown = null;
-                        });
-                      },
-                    );
-                  },
+    return SafeArea(
+      child: Scaffold(
+        body: Column(
+          children: [
+            Container(
+              height: 120,
+              alignment: Alignment.center,
+              child: MatchAppBar(
+                controller: _controller,
+                score: score,
+                onCountdownFinished: onCountdownFinished,
+              ),
+            ),
+            Expanded(
+              child: Container(
+                alignment: Alignment.center,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: GridView.builder(
+                        key: const Key('leftGrid'),
+                        shrinkWrap: true,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          childAspectRatio: 1.3,
+                          mainAxisSpacing: 8,
+                        ),
+                        itemCount: leftList.length,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (BuildContext context, int index) {
+                          return CustomCard(
+                            testKey: 'leftCard-${leftList[index].id}',
+                            key: Key('leftCard-$index'),
+                            isFirstRun: isFirstRun,
+                            status: leftList[index].status,
+                            selected: leftList[index].selected == true,
+                            text: widget.version == 'v1'
+                                ? leftList[index].name
+                                : '',
+                            fitCover: leftList[index].isPlayer == false,
+                            imageUrl: leftList[index].imageUrl,
+                            isHeldDown: index == leftHeldDown,
+                            disabled:
+                                leftList[index].status == MatchStatus.hidden ||
+                                    !gameStarted,
+                            onTap: () {
+                              leftHeldDown = null;
+                              if (!isLeftCardVisisble(index)) {
+                                return;
+                              }
+                              onLeftCardTap(index);
+                            },
+                            onTapDown: (_) {
+                              if (!isLeftCardVisisble(index)) {
+                                return;
+                              }
+                              setState(() {
+                                leftHeldDown = index;
+                              });
+                            },
+                            onTapCancel: () {
+                              if (!isLeftCardVisisble(index)) {
+                                return;
+                              }
+                              setState(() {
+                                leftHeldDown = null;
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 14,
+                    ),
+                    Expanded(
+                      child: GridView.builder(
+                        key: const Key('rightGrid'),
+                        shrinkWrap: true,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          childAspectRatio: 1.3,
+                          mainAxisSpacing: 8,
+                        ),
+                        itemCount: rightList.length,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (BuildContext context, int index) {
+                          return CustomCard(
+                            testKey: 'rightCard-${rightList[index].id}',
+                            key: Key('rightCard-$index'),
+                            isFirstRun: isFirstRun,
+                            status: rightList[index].status,
+                            selected: rightList[index].selected == true,
+                            text: widget.version == 'v1'
+                                ? rightList[index].name
+                                : '',
+                            imageUrl: rightList[index].imageUrl,
+                            isHeldDown: rightHeldDown == index,
+                            disabled:
+                                rightList[index].status == MatchStatus.hidden ||
+                                    !gameStarted,
+                            onTap: () {
+                              rightHeldDown = null;
+                              if (!isRightCardVisible(index)) {
+                                return;
+                              }
+                              onRightCardTap(index);
+                            },
+                            onTapDown: (_) {
+                              if (!isRightCardVisible(index)) {
+                                return;
+                              }
+                              setState(() {
+                                rightHeldDown = index;
+                              });
+                            },
+                            onTapCancel: () {
+                              if (!isRightCardVisible(index)) {
+                                return;
+                              }
+                              setState(() {
+                                rightHeldDown = null;
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(
-                width: 14,
-              ),
-              Expanded(
-                child: GridView.builder(
-                  key: const Key('rightGrid'),
-                  shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    childAspectRatio: 1.5,
-                    mainAxisSpacing: 8,
-                  ),
-                  itemCount: rightList.length,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (BuildContext context, int index) {
-                    return CustomCard(
-                      testKey: 'rightCard-${rightList[index].id}',
-                      key: Key('rightCard-$index'),
-                      isFirstRun: isFirstRun,
-                      status: rightList[index].status,
-                      selected: rightList[index].selected == true,
-                      text: widget.version == 'v1' ? rightList[index].name : '',
-                      imageUrl: rightList[index].imageUrl,
-                      isHeldDown: rightHeldDown == index,
-                      disabled: rightList[index].status == MatchStatus.hidden ||
-                          !gameStarted,
-                      onTap: () {
-                        rightHeldDown = null;
-                        if (!isRightCardVisible(index)) {
-                          return;
-                        }
-                        onRightCardTap(index);
-                      },
-                      onTapDown: (_) {
-                        if (!isRightCardVisible(index)) {
-                          return;
-                        }
-                        setState(() {
-                          rightHeldDown = index;
-                        });
-                      },
-                      onTapCancel: () {
-                        if (!isRightCardVisible(index)) {
-                          return;
-                        }
-                        setState(() {
-                          rightHeldDown = null;
-                        });
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

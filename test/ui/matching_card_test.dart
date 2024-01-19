@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mockito/annotations.dart';
-import 'package:of_card_match/domain/matching_card_board.dart';
 
 import 'package:of_card_match/locator.dart';
 import 'package:of_card_match/ui/matching_cards/custom_card.dart';
